@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Master: Pro Elite v16</title>
+    <title>Speaking Master: Pro Elite v17</title>
     <style>
         :root { 
             --apple-navy: #1D1D1F; --ios-blue: #007AFF; --ios-red: #D70015; 
             --ios-bg: #F5F5F7; --dial-navy: #002D5E; --soft-green-bg: #E8F5E9; 
             --deep-green-text: #2E7D32; --border: #D2D2D7; 
-            --bubble-gray: #F2F2F7; /* [수정] 아주 미세한 회색 (말풍선용) */
+            --bubble-gray: #F8F8FA; /* 아주 미세한 회색 (말풍선용) */
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background: var(--ios-bg); margin: 0; color: var(--apple-navy); -webkit-font-smoothing: antialiased; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background: var(--ios-bg); margin: 0; color: var(--apple-navy); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         .container { max-width: 500px; margin: 0 auto; min-height: 100vh; background: var(--ios-bg); position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.05); }
 
         /* Navigation */
@@ -26,57 +26,65 @@
         .sub-btn { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #fff; font-size: 12px; font-weight: 800; color: #86868B; cursor: pointer; transition: 0.2s; }
         .sub-btn.active { background: var(--ios-blue); color: #fff; border-color: var(--ios-blue); box-shadow: 0 4px 10px rgba(0,122,255,0.3); }
 
-        /* [수정] 다이얼 디자인: 아이폰 타이머 스타일 */
+        /* [수정] 다이얼 디자인: 아이폰 타이머 스타일 + 중앙 강조 */
         .picker-frame { 
             position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; 
             overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border);
-            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            /* 중앙만 밝게 처리하는 마스크 */
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%);
         }
-        /* 아이폰 타이머 스타일의 선택 박스 */
         .picker-frame::before {
             content: ""; position: absolute; left: 8px; right: 8px; top: 68px; height: 44px;
-            background: rgba(0, 0, 0, 0.05); border-radius: 10px; z-index: 1; pointer-events: none;
+            background: rgba(0, 0, 0, 0.04); border-radius: 10px; z-index: 1; pointer-events: none;
         }
 
-        .picker-track { position: absolute; width: 100%; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+        .picker-track { position: absolute; width: 100%; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); top: 0; }
         .picker-node { 
             height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            font-size: 17px; color: var(--dial-navy); transition: 0.3s ease;
-            filter: blur(0.6px); opacity: 0.4; /* 블러를 연하게 조절 */
+            font-size: 17px; color: var(--dial-navy); transition: 0.3s ease; opacity: 0.4;
         }
         .picker-node.active { 
-            opacity: 1; font-weight: 800; font-size: 20px; filter: blur(0); 
-            color: var(--ios-blue); z-index: 2;
+            opacity: 1; font-weight: 800; font-size: 20px; color: var(--ios-blue); z-index: 2;
         }
 
-        /* 당첨 바운스 애니메이션 */
         .bounce-effect { animation: bounce 0.6s cubic-bezier(0.36, 0, 0.66, -0.56) alternate; }
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-5px) scale(1.05); }
-            100% { transform: translateY(0) scale(1); }
+        @keyframes bounce { 0% { transform: translateY(0); } 50% { transform: translateY(-5px) scale(1.05); } 100% { transform: translateY(0) scale(1); } }
+
+        /* 피드백 카드: 문장 단위 세분화 */
+        .compare-box { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .orig-sentence { 
+            background: var(--bubble-gray); color: #424245; padding: 14px 18px; 
+            border-radius: 16px; font-size: 15px; font-weight: 500; margin-bottom: 10px; 
+            border: 1px solid #EAEAEA; border-left: 5px solid #D2D2D7; line-height: 1.5;
+        }
+        .better-sentence { 
+            background: var(--soft-green-bg); color: var(--deep-green-text); padding: 16px 18px; 
+            border-radius: 16px; font-size: 16px; font-weight: 700; border-left: 5px solid var(--deep-green-text); line-height: 1.5;
+        }
+
+        /* 점수 & 총평 */
+        .score-circle { display: inline-block; width: 85px; height: 85px; line-height: 85px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 26px; font-weight: 900; margin-bottom: 10px; }
+        .ai-comment { font-size: 14px; font-weight: 700; color: #555; margin-bottom: 25px; white-space: pre-line; }
+
+        /* [수정] 어드민 모드: 삭제 및 비활성화 버튼 */
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .admin-item { 
+            background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--border); 
+            display: flex; justify-content: space-between; align-items: center; position: relative;
+            transition: 0.2s; cursor: pointer;
+        }
+        .admin-item.disabled { background: #E5E5EA; opacity: 0.6; }
+        .admin-item .item-text { font-size: 12px; font-weight: 700; color: var(--dial-navy); flex: 1; }
+        .admin-item .del-btn { 
+            background: var(--ios-red); color: white; border: none; width: 22px; height: 22px; 
+            border-radius: 50%; font-size: 12px; font-weight: 900; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; margin-left: 10px;
         }
 
         .selection-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; max-height: 400px; overflow-y: auto; }
-        .grid-item { background: #fff; padding: 15px 5px; border-radius: 14px; font-size: 12px; font-weight: 700; text-align: center; border: 0.5px solid var(--border); cursor: pointer; color: var(--dial-navy); }
+        .grid-item { background: #fff; padding: 15px 5px; border-radius: 14px; font-size: 12px; font-weight: 700; text-align: center; border: 0.5px solid var(--border); cursor: pointer; }
 
-        /* 점수 & 총평 UI */
-        .score-circle { display: inline-block; width: 85px; height: 85px; line-height: 85px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 26px; font-weight: 900; margin-bottom: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-        .ai-comment { font-size: 14px; font-weight: 700; color: #555; margin-bottom: 25px; line-height: 1.5; white-space: pre-line; }
-        
-        /* [수정] 피드백 카드: 아주 미세한 회색 말풍선 배경 */
-        .orig-sentence { 
-            background: var(--bubble-gray); /* 아주 옅은 회색 적용 */
-            color: #424245; padding: 14px 18px; 
-            border-radius: 16px; font-size: 15px; font-weight: 500; margin-bottom: 10px; 
-            border: 1px solid #E5E5E5;
-            border-left: 5px solid #D2D2D7;
-            line-height: 1.5; word-break: keep-all; overflow-wrap: break-word;
-        }
-        .better-sentence { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 16px 18px; border-radius: 16px; font-size: 16px; font-weight: 700; border-left: 5px solid var(--deep-green-text); line-height: 1.5; word-break: keep-all; overflow-wrap: break-word; }
-
-        /* Progress Bar */
         .progress-container { width: 100%; height: 8px; background: #E5E5EA; border-radius: 10px; margin: 20px 0 5px 0; overflow: hidden; display: none; }
         .progress-bar { width: 0%; height: 100%; background: var(--ios-blue); transition: width 0.3s ease; }
         #progressPercent { display: block; font-size: 14px; font-weight: 800; color: var(--ios-blue); margin-bottom: 20px; }
@@ -167,28 +175,30 @@
 </div>
 
 <script>
-    // [시스템 유지] 기존 데이터베이스 및 로직
-    let db = JSON.parse(localStorage.getItem('speaking_db_v16')) || {
+    // [데이터 업데이트] 단순 문자열에서 객체 구조로 변경하여 활성화 여부 저장
+    let rawDb = JSON.parse(localStorage.getItem('speaking_db_v17')) || {
         v1: ["Gym (체육관)", "Central Park (센트럴 파크)", "Pharmacy (약국)", "Airport (공항)", "Library (도서관)", "Museum (박물관)", "Zoo (동물원)", "Beach (해변)", "Mountain (산)", "Bank (은행)", "Post Office (우체국)", "Hospital (병원)", "University (대학교)", "Starbucks (스타벅스)", "Subway (지하철)", "Luxury Hotel (고급 호텔)", "Stadium (경기장)", "City Hall (시청)", "Harbor (항구)", "Amusement Park (놀이공원)", "Art Gallery (미술관)", "Police Station (경찰서)", "Fire Station (소방서)", "Castle (성)", "Temple (사원)", "Church (교회)", "Gas Station (주유소)", "Flower Shop (꽃집)", "Department Store (백화점)", "Market (시장)", "Cinema (영화관)", "Theater (극장)", "Concert Hall (콘서트 홀)", "Square (광장)", "Bridge (다리)", "Desert (사막)", "Forest (숲)", "Jungle (정글)", "Island (섬)", "Port (항구)"],
-        v2: ["Fried Chicken (치킨)", "Kimchi Stew (김치찌개)", "Bulgogi (불고기)", "Tteokbokki (떡볶이)", "Bibimbap (비빔밥)", "Pasta (파스타)", "Steak (스테이크)", "Sushi (초밥)", "Ramen (라면)", "Pizza (피자)", "Hamburger (햄버거)", "Taco (타코)", "Burrito (부리토)", "Dim Sum (딤섬)", "Peking Duck (북경오리)", "Pho (쌀국수)", "Pad Thai (팟타이)", "Bagel (베이글)", "Macaron (마카롱)", "Gelato (젤라토)", "Brownie (브라우니)", "Waffle (와플)", "Pancake (팬케이크)", "Acaibowl (아사이볼)", "Salad (샐러드)", "Sandwich (샌드위치)", "Tonkatsu (돈가스)", "Udon (우동)", "Tempura (튀김)", "Kebab (케밥)", "Gyros (기로스)", "Risotto (리조또)", "Lasagna (라자냐)", "Clam Chowder (클램 차우더)", "Galbi (갈비)", "Naengmyeon (냉면)", "Dakgalbi (닭갈비)", "Yukhoe (육회)", "Gimbap (김밥)", "Japchae (잡채)", "Donut (도넛)", "Hot Dog (핫도그)", "BBQ Ribs (바비큐 립)", "Buffalo Wings (버팔로 윙)", "Omelette (오믈렛)", "Truffle Pasta (트러플 파스타)", "Bingsu (빙수)", "Malatang (마라탕)", "Tanghulu (탕후루)", "Tiramisu (티라미수)", "Croissant (크로와상)", "Cheesecake (치즈케이크)", "Mojito (모히또)", "Sangria (샹그리아)", "Soju (소주)", "Croque Monsieur (크로크무슈)", "Fish and Chips (피쉬앤칩스)", "Paella (파에야)", "Poutine (푸틴)", "Hummus (후무스)", "Falafel (팔라펠)", "Gnocchi (뇨끼)", "Ratatouille (라따뚜이)", "Sashimi (사시미)", "Unagi (장어구이)", "Shabu Shabu (샤브샤브)", "Mapo Tofu (마포두부)", "Spring Roll (스프링롤)", "Naan (난)", "Curry (카레)", "Churros (츄러스)", "Fondue (퐁듀)", "Goulash (굴라쉬)", "Escargot (에스카르고)", "Tapas (타파스)", "Miso Soup (미소된장국)", "Dumplings (만두)", "Kimchi (김치)", "Kalguksu (칼국수)", "Bossam (보쌈)", "Jokbal (질발)", "Gamjatang (감자탕)", "Sundae (순대)", "Mandu (만두)", "Pajeon (파전)", "Yakgwa (약과)", "Sikhye (식혜)", "Sujeonggwa (수정과)", "Dalgona (달고나)", "Honey Bread (허니브레드)", "Egg Drop (에그드랍)", "Gyeran-mari (계란말이)", "Dubu-kimchi (두부김치)", "Golbaengi-muchim (골뱅이무침)", "Jeon (전)", "Mandu-guk (만둣국)", "Sujebi (수제비)", "Kimbap (김밥)", "Jajangmyeon (짜장면)", "Jjamppong (짬뽕)"]
+        v2: ["Fried Chicken (치킨)", "Kimchi Stew (김치찌개)", "Bulgogi (불고기)", "Tteokbokki (떡볶이)", "Bibimbap (비빔밥)", "Pasta (파스타)", "Steak (스테이크)", "Sushi (초밥)", "Ramen (라면)", "Pizza (피자)", "Hamburger (햄버거)", "Taco (타코)", "Burrito (부리토)", "Dim Sum (딤섬)", "Peking Duck (북경오리)", "Pho (쌀국수)", "Pad Thai (팟타이)", "Bagel (베이글)", "Macaron (마카롱)", "Gelato (젤라토)", "Brownie (브라우니)", "Waffle (와플)", "Pancake (팬케이크)", "Acaibowl (아사이볼)", "Salad (샐러드)", "Sandwich (샌드위치)", "Tonkatsu (돈가스)", "Udon (우동)", "Tempura (튀김)", "Kebab (케밥)", "Gyros (기로스)", "Risotto (리조또)", "Lasagna (라자냐)", "Clam Chowder (클램 차우더)", "Galbi (갈비)", "Naengmyeon (냉면)", "Dakgalbi (닭갈비)", "Yukhoe (육회)", "Gimbap (김밥)", "Japchae (잡채)", "Donut (도넛)", "Hot Dog (핫도그)", "BBQ Ribs (바비큐 립)", "Buffalo Wings (버팔로 윙)", "Omelette (오믈렛)", "Truffle Pasta (트러플 파스타)", "Bingsu (빙수)", "Malatang (마라탕)", "Tanghulu (탕후루)", "Tiramisu (티라미수)", "Croissant (크로와상)", "Cheesecake (치즈케이크)", "Mojito (모히또)", "Sangria (샹그리아)", "Soju (소주)", "Croque Monsieur (크로크무슈)", "Fish and Chips (피쉬앤칩스)", "Paella (파에야)", "Poutine (푸틴)", "Hummus (후무스)", "Falafel (팔라펠)", "Gnocchi (뇨끼)", "Ratatouille (라따뚜이)", "Sashimi (사시미)", "Unagi (장어구이)", "Shabu Shabu (샤브샤브)", "Mapo Tofu (마포두부)", "Spring Roll (스프링롤)", "Naan (난)", "Curry (카레)", "Churros (츄러스)", "Fondue (퐁듀)", "Goulash (굴라쉬)", "Escargot (에스카르고)", "Tapas (타파스)", "Miso Soup (미소된장국)", "Dumplings (만두)", "Kimchi (김치)", "Kalguksu (칼국수)", "Bossam (보쌈)", "Jokbal (족발)", "Gamjatang (감자탕)", "Sundae (순대)", "Mandu (만두)", "Pajeon (파전)", "Yakgwa (약과)", "Sikhye (식혜)", "Sujeonggwa (수정과)", "Dalgona (달고나)", "Honey Bread (허니브레드)", "Egg Drop (에그드랍)", "Gyeran-mari (계란말이)", "Dubu-kimchi (두부김치)", "Golbaengi-muchim (골뱅이무침)", "Jeon (전)", "Mandu-guk (만둣국)", "Sujebi (수제비)", "Kimbap (김밥)", "Jajangmyeon (짜장면)", "Jjamppong (짬뽕)"]
     };
 
-    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v16')) || [];
+    // 하위 호환성 및 객체화 작업
+    let db = { v1: [], v2: [] };
+    ['v1', 'v2'].forEach(cat => {
+        rawDb[cat].forEach(item => {
+            if (typeof item === 'string') db[cat].push({ val: item, active: true });
+            else db[cat].push(item);
+        });
+    });
+
+    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v17')) || [];
     let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [], rollInterval;
 
     window.onload = () => { loadDial('v1'); renderAdmin(); updateArchiveUI(); };
 
-    // [추가] 점수별 총평 시스템
     function getAIEvaluation(score) {
         if (score >= 95) return "완벽합니다!\n실제 원어민과 대화하는 것 같네요.";
         if (score >= 90) return "거의 다 왔습니다!\n거의 원어민 수준 문장력이지만 단어가 조금 단조롭습니다!";
-        if (score >= 85) return "놀라운 실력입니다!\n문장의 흐름이 매우 자연스러워요.";
-        if (score >= 80) return "매우 좋습니다!\n조금 더 어려운 어휘를 섞어보세요.";
         if (score >= 75) return "훌륭합니다!\n도치에 조금만 익숙해지시면 좋을거 같아요.";
-        if (score >= 70) return "안정적인 실력입니다.\n발음에 조금 더 자신감을 가져보세요.";
-        if (score >= 65) return "의사전달이 확실합니다.\n관사 사용에 주의해보세요.";
-        if (score >= 60) return "기초가 탄탄하시네요!\n문장의 길이를 늘려보세요.";
-        if (score >= 55) return "좋은 흐름입니다.\n시제 일치에 신경 써보세요.";
         if (score >= 50) return "좀 더 연습하세요.\n문법을 더 신경쓰면 좋겠어요.";
         return "기초부터 차근차근!\n짧은 문장부터 연습해봅시다.";
     }
@@ -217,30 +227,37 @@
         if(playMode === 'random') loadDial(c); else renderGrid();
     }
 
+    // [수정] 다이얼 로드: 활성화된 단어만 표시 + 초기 정렬
     function loadDial(type) {
         const track = document.getElementById('pickerTrack');
         track.innerHTML = "";
-        const data = [...db[type], ...db[type]];
+        const activeList = db[type].filter(i => i.active);
+        if(activeList.length === 0) { track.innerHTML = "<div class='picker-node active'>선택된 단어 없음</div>"; return; }
+        
+        const data = [...activeList, ...activeList];
         data.forEach(item => {
-            const split = item.split(' (');
+            const split = item.val.split(' (');
             track.innerHTML += `<div class="picker-node"><div>${split[0]}</div><div style="font-size:10px; color:#999;">${split[1]?split[1].replace(')',''):''}</div></div>`;
         });
-        track.style.transform = `translateY(0px)`;
+        
+        // 시작 시 첫 번째 단어가 중앙에 오도록 오프셋 조절 (68px는 중앙 박스 시작 위치)
+        track.style.transform = `translateY(68px)`;
+        track.children[0].classList.add('active');
     }
 
     function renderGrid() {
         const grid = document.getElementById('selectionGrid');
-        grid.innerHTML = db[currentCat].map(t => `<div class="grid-item" onclick="startPractice('${t}')">${t}</div>`).join('');
+        grid.innerHTML = db[currentCat].filter(i => i.active).map(t => `<div class="grid-item" onclick="startPractice('${t.val}')">${t.val}</div>`).join('');
     }
 
     function handleSpin() {
         document.getElementById('spinBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
         document.querySelectorAll('.picker-node').forEach(n => n.classList.remove('active', 'bounce-effect'));
-        let pos = 0;
+        let pos = 68;
         rollInterval = setInterval(() => { 
             pos -= 14; 
-            if(Math.abs(pos) >= document.getElementById('pickerTrack').scrollHeight / 2) pos = 0; 
+            if(Math.abs(pos) >= document.getElementById('pickerTrack').scrollHeight / 2) pos = 68; 
             document.getElementById('pickerTrack').style.transform = `translateY(${pos}px)`; 
         }, 16);
     }
@@ -248,8 +265,10 @@
     function stopSpin() {
         clearInterval(rollInterval);
         const track = document.getElementById('pickerTrack');
-        const finalIdx = Math.floor(Math.random() * (track.children.length/2)) + Math.floor(track.children.length/2);
-        track.style.transition = "transform 3s cubic-bezier(0.1, 0, 0.1, 1)";
+        const activeList = db[currentCat].filter(i => i.active);
+        const finalIdx = Math.floor(Math.random() * activeList.length) + activeList.length;
+        
+        track.style.transition = "transform 3.0s cubic-bezier(0.1, 0, 0.1, 1)";
         track.style.transform = `translateY(${-(finalIdx * 44) + 68}px)`;
 
         setTimeout(() => {
@@ -330,10 +349,10 @@
             sentences: data.sentences,
             full_text: data.user_speech
         });
-        localStorage.setItem('study_archive_v16', JSON.stringify(studyArchive));
+        localStorage.setItem('study_archive_v17', JSON.stringify(studyArchive));
     }
 
-    // [수정] 피드백 뷰에 총평 추가
+    // [수정] 피드백 뷰: 문장 단위 세분화 레이아웃
     function renderFeedbackView(res, fullText, containerId) {
         const score = res.total_score;
         let html = `
@@ -342,9 +361,10 @@
                 <div class="ai-comment">${getAIEvaluation(score)}</div>
             </div>`;
         
+        // 문장별 비교 박스 생성
         res.sentences.forEach(s => {
             html += `
-                <div style="margin-bottom:25px; text-align:left;">
+                <div class="compare-box">
                     <span style="font-size:10px; font-weight:800; color:#8E8E93; display:block; margin-bottom:5px;">내가 말한 문장</span>
                     <div class="orig-sentence">${s.orig}</div>
                     <span style="font-size:10px; font-weight:800; color:var(--deep-green-text); display:block; margin-bottom:5px;">AI 추천 개선 문장</span>
@@ -352,6 +372,7 @@
                     <div style="font-size:13px; color:var(--deep-green-text); font-weight:700; margin-top:8px;">${s.better_ko}</div>
                 </div>`;
         });
+        
         html += `<div style="background:#fff; padding:20px; border-radius:24px; border:1px solid var(--border); font-size:14px; text-align:left; margin-top:20px;">
                     <b style="font-size:10px; color:#888;">FULL TRANSCRIPT</b><br>${fullText}
                  </div>`;
@@ -360,7 +381,7 @@
 
     function updateArchiveUI() {
         const list = document.getElementById('archiveList');
-        if(studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px;'>학습 기록이 없습니다.</p>"; return; }
+        if(studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px;'>기록이 없습니다.</p>"; return; }
         list.innerHTML = studyArchive.map(e => {
             const first = e.sentences[0] || { orig: "...", better_en: "..." };
             return `
@@ -385,25 +406,54 @@
     }
 
     function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
-    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v16', JSON.stringify(studyArchive)); updateArchiveUI(); } }
-    function clearArchive() { if(confirm("전체 삭제할까요?")) { studyArchive = []; localStorage.setItem('study_archive_v16', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v17', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function clearArchive() { if(confirm("전체 삭제할까요?")) { studyArchive = []; localStorage.setItem('study_archive_v17', JSON.stringify(studyArchive)); updateArchiveUI(); } }
 
+    // [수정] 어드민 모드: 삭제(X) 및 토글(비활성화)
     function renderAdmin() {
         const cont = document.getElementById('adminContent');
         cont.innerHTML = ['v1', 'v2'].map(c => `
             <div style="background:#fff; padding:20px; border-radius:22px; margin-bottom:15px; border:1px solid var(--border);">
                 <div style="font-weight:800; margin-bottom:10px;">${c==='v1'?'Places':'Food'} (${db[c].length})</div>
-                <div style="font-size:11px; color:#666; background:#f9f9f9; padding:10px; border-radius:12px; max-height:80px; overflow-y:auto; margin-bottom:10px;">${db[c].join(', ')}</div>
-                <div style="display:flex; gap:8px;">
+                <div style="display:flex; gap:8px; margin-bottom:15px;">
                     <input type="text" id="add-${c}" placeholder="추가..." style="flex:1; border:1px solid #ddd; border-radius:10px; padding:10px; outline:none;"><button class="sub-btn active" style="width:60px;" onclick="addWord('${c}')">Add</button>
+                </div>
+                <div class="admin-grid">
+                    ${db[c].map((item, idx) => `
+                        <div class="admin-item ${item.active?'':'disabled'}" onclick="toggleWord('${c}', ${idx})">
+                            <span class="item-text">${item.val}</span>
+                            <button class="del-btn" onclick="deleteWord('${c}', ${idx}, event)">×</button>
+                        </div>
+                    `).join('')}
                 </div>
             </div>`).join('');
     }
 
     function addWord(c) {
         const val = document.getElementById(`add-${c}`).value.trim();
-        if(!val) return; db[c].unshift(val); localStorage.setItem('speaking_db_v16', JSON.stringify(db));
-        document.getElementById(`add-${c}`).value = ""; renderAdmin();
+        if(!val) return; 
+        db[c].unshift({ val: val, active: true }); 
+        saveDb();
+        renderAdmin();
+    }
+
+    function deleteWord(c, idx, ev) {
+        ev.stopPropagation();
+        if(confirm("이 단어를 완전히 삭제할까요?")) {
+            db[c].splice(idx, 1);
+            saveDb();
+            renderAdmin();
+        }
+    }
+
+    function toggleWord(c, idx) {
+        db[c][idx].active = !db[c][idx].active;
+        saveDb();
+        renderAdmin();
+    }
+
+    function saveDb() {
+        localStorage.setItem('speaking_db_v17', JSON.stringify(db));
     }
 </script>
 </body>
