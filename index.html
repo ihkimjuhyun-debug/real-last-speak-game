@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Master: Pro Elite v14</title>
+    <title>Speaking Master: Pro Elite v15</title>
     <style>
         :root { 
             --apple-navy: #1D1D1F; --ios-blue: #007AFF; --ios-red: #D70015; 
             --ios-bg: #F5F5F7; --dial-navy: #002D5E; --soft-green-bg: #E8F5E9; 
             --deep-green-text: #2E7D32; --border: #D2D2D7; 
-            --standard-gray: #F2F2F7; /* 옅고 세련된 스탠다드 그레이 */
+            --standard-gray: #F2F2F7;
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background: var(--ios-bg); margin: 0; color: var(--apple-navy); -webkit-font-smoothing: antialiased; }
         .container { max-width: 500px; margin: 0 auto; min-height: 100vh; background: var(--ios-bg); position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.05); }
 
-        /* 1. 네비게이션 & 모드 스위치 디자인 복구 */
+        /* Navigation */
         .nav-bar { display: flex; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 16px 0; border: none; background: none; font-size: 13px; font-weight: 700; color: #86868B; cursor: pointer; transition: 0.3s; }
         .tab.active { color: var(--ios-blue); border-bottom: 2.5px solid var(--ios-blue); }
@@ -22,72 +22,72 @@
         .section { display: none; padding: 20px; animation: slideUp 0.4s ease-out; }
         .section.active { display: block; }
 
-        /* [디자인 복구] 모드 & 카테고리 버튼 아이콘 스타일 */
         .mode-switch { display: flex; gap: 8px; margin-bottom: 12px; }
-        .sub-btn { 
-            flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); 
-            background: #fff; font-size: 12px; font-weight: 800; color: #86868B; 
-            cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
+        .sub-btn { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #fff; font-size: 12px; font-weight: 800; color: #86868B; cursor: pointer; transition: 0.2s; }
         .sub-btn.active { background: var(--ios-blue); color: #fff; border-color: var(--ios-blue); box-shadow: 0 4px 10px rgba(0,122,255,0.3); }
 
-        /* 2. 직접 선택 그리드 디자인 복구 */
-        .selection-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; max-height: 400px; overflow-y: auto; padding-bottom: 20px; }
-        .grid-item { 
-            background: #fff; padding: 15px 5px; border-radius: 14px; font-size: 12px; 
-            font-weight: 700; text-align: center; border: 0.5px solid var(--border); 
-            cursor: pointer; color: var(--dial-navy); transition: 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        /* [수정] 다이얼 디자인: 가로선 및 블러 효과 */
+        .picker-frame { 
+            position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; 
+            overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border);
+            mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
         }
-        .grid-item:active { transform: scale(0.95); background: var(--ios-bg); }
+        /* 당첨 가로선 */
+        .picker-frame::before, .picker-frame::after {
+            content: ""; position: absolute; left: 10%; right: 10%; height: 1.5px;
+            background: var(--ios-blue); opacity: 0.6; z-index: 10;
+        }
+        .picker-frame::before { top: 68px; }
+        .picker-frame::after { top: 112px; }
 
-        /* 3. 로딩 게이지 시스템 유지 */
-        .progress-container { width: 100%; height: 8px; background: #E5E5EA; border-radius: 10px; margin: 20px 0 5px 0; overflow: hidden; display: none; }
-        .progress-bar { width: 0%; height: 100%; background: var(--ios-blue); transition: width 0.3s ease; }
-        #progressPercent { display: block; font-size: 14px; font-weight: 800; color: var(--ios-blue); margin-bottom: 20px; }
-
-        /* 다이얼 디자인 */
-        .picker-frame { position: relative; height: 180px; background: #FFFFFF; border-radius: 20px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); }
         .picker-track { position: absolute; width: 100%; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
-        .picker-node { height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 17px; color: var(--dial-navy); opacity: 0.2; }
-        .picker-node.active { opacity: 1; font-weight: 800; font-size: 19px; }
-
-        /* 4. 세련된 점수 디자인 복구 */
-        .score-circle { 
-            display: inline-block; width: 85px; height: 85px; line-height: 85px; 
-            border-radius: 50%; background: var(--apple-navy); color: #fff; 
-            font-size: 26px; font-weight: 900; margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        .picker-node { 
+            height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            font-size: 17px; color: var(--dial-navy); transition: 0.4s;
+            filter: blur(1.5px); opacity: 0.15; /* 기본 블러 처리 */
+        }
+        .picker-node.active { 
+            opacity: 1; font-weight: 800; font-size: 21px; filter: blur(0); 
+            color: var(--ios-blue);
         }
 
-        /* 5. 가독성 강화된 VOCAB & 피드백 비교 레이아웃 (짤림 방지) */
-        .compare-box { margin-bottom: 25px; text-align: left; width: 100%; }
-        .label-needed { font-size: 11px; font-weight: 800; color: #8E8E93; margin-bottom: 6px; display: block; letter-spacing: -0.3px; }
-        .label-better { font-size: 11px; font-weight: 800; color: var(--deep-green-text); margin-bottom: 6px; display: block; letter-spacing: -0.3px; }
+        /* [추가] 당첨 바운스 애니메이션 */
+        .bounce-effect { animation: bounce 0.6s cubic-bezier(0.36, 0, 0.66, -0.56) alternate; }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-8px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        .selection-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; max-height: 400px; overflow-y: auto; }
+        .grid-item { background: #fff; padding: 15px 5px; border-radius: 14px; font-size: 12px; font-weight: 700; text-align: center; border: 0.5px solid var(--border); cursor: pointer; color: var(--dial-navy); }
+
+        /* 점수 & 분석 UI */
+        .score-circle { display: inline-block; width: 85px; height: 85px; line-height: 85px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 26px; font-weight: 900; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         
+        /* [수정] 피드백 카드: 흰색 배경 + 회색 테두리 */
         .orig-sentence { 
-            background: var(--standard-gray); color: #424245; padding: 14px 18px; 
+            background: #fff; color: #424245; padding: 14px 18px; 
             border-radius: 16px; font-size: 15px; font-weight: 500; margin-bottom: 10px; 
-            border-left: 5px solid #D2D2D7; line-height: 1.5; word-break: keep-all; overflow-wrap: break-word;
+            border: 1px solid #E5E5E5; /* 가장자리 회색 유지 */
+            border-left: 5px solid #D2D2D7; /* 포인트 선 유지 */
+            line-height: 1.5; word-break: keep-all; overflow-wrap: break-word;
         }
-        .better-sentence { 
-            background: var(--soft-green-bg); color: var(--deep-green-text); padding: 16px 18px; 
-            border-radius: 16px; font-size: 16px; font-weight: 700; 
-            border-left: 5px solid var(--deep-green-text); line-height: 1.5; word-break: keep-all; overflow-wrap: break-word;
-        }
+        .better-sentence { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 16px 18px; border-radius: 16px; font-size: 16px; font-weight: 700; border-left: 5px solid var(--deep-green-text); line-height: 1.5; word-break: keep-all; overflow-wrap: break-word; }
 
-        /* 아카이브 리스트 가독성 강화 */
-        .archive-card { 
-            background: #fff; padding: 22px; border-radius: 24px; margin-bottom: 15px; 
-            border: 0.5px solid var(--border); cursor: pointer; display: flex; flex-direction: column; 
-            gap: 8px; position: relative; transition: 0.2s;
-        }
+        /* 아카이브 리스트 */
+        .archive-card { background: #fff; padding: 22px; border-radius: 24px; margin-bottom: 15px; border: 0.5px solid var(--border); cursor: pointer; display: flex; flex-direction: column; gap: 8px; position: relative; }
         .arc-header { display: flex; justify-content: space-between; align-items: center; }
         .arc-time { font-size: 11px; font-weight: 800; color: var(--ios-blue); }
         .arc-topic { font-size: 19px; font-weight: 900; color: var(--dial-navy); }
-        .arc-score-tag { font-size: 13px; font-weight: 800; color: var(--apple-navy); background: #eee; padding: 2px 8px; border-radius: 6px; }
-        .arc-preview-label { font-size: 10px; font-weight: 800; color: #bbb; margin-top: 5px; }
-        .arc-text-box { font-size: 14px; line-height: 1.4; word-break: break-all; }
+        .arc-score-tag { font-size: 13px; font-weight: 800; color: var(--apple-navy); background: #eee; padding: 2px 8px; border-radius: 6px; align-self: start; }
+        .delete-btn { font-size: 11px; color: var(--ios-red); font-weight: 700; background: none; border: none; cursor: pointer; }
+
+        /* Progress Bar */
+        .progress-container { width: 100%; height: 8px; background: #E5E5EA; border-radius: 10px; margin: 20px 0 5px 0; overflow: hidden; display: none; }
+        .progress-bar { width: 0%; height: 100%; background: var(--ios-blue); transition: width 0.3s ease; }
+        #progressPercent { display: block; font-size: 14px; font-weight: 800; color: var(--ios-blue); margin-bottom: 20px; }
 
         .btn-apple { width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn-blue { background: var(--ios-blue); color: white; }
@@ -120,7 +120,6 @@
 
         <div id="random-ui">
             <div class="picker-frame">
-                <div class="picker-overlay"></div>
                 <div id="pickerTrack" class="picker-track"></div>
             </div>
             <button id="spinBtn" class="btn-apple btn-blue" onclick="handleSpin()">Spin Dial</button>
@@ -170,13 +169,13 @@
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('speaking_db_v14')) || {
+    let db = JSON.parse(localStorage.getItem('speaking_db_v15')) || {
         v1: ["Gym (체육관)", "Central Park (센트럴 파크)", "Pharmacy (약국)", "Airport (공항)", "Library (도서관)", "Museum (박물관)", "Zoo (동물원)", "Beach (해변)", "Mountain (산)", "Bank (은행)", "Post Office (우체국)", "Hospital (병원)", "University (대학교)", "Starbucks (스타벅스)", "Subway (지하철)", "Luxury Hotel (고급 호텔)", "Stadium (경기장)", "City Hall (시청)", "Harbor (항구)", "Amusement Park (놀이공원)", "Art Gallery (미술관)", "Police Station (경찰서)", "Fire Station (소방서)", "Castle (성)", "Temple (사원)", "Church (교회)", "Gas Station (주유소)", "Flower Shop (꽃집)", "Department Store (백화점)", "Market (시장)", "Cinema (영화관)", "Theater (극장)", "Concert Hall (콘서트 홀)", "Square (광장)", "Bridge (다리)", "Desert (사막)", "Forest (숲)", "Jungle (정글)", "Island (섬)", "Port (항구)"],
         v2: ["Fried Chicken (치킨)", "Kimchi Stew (김치찌개)", "Bulgogi (불고기)", "Tteokbokki (떡볶이)", "Bibimbap (비빔밥)", "Pasta (파스타)", "Steak (스테이크)", "Sushi (초밥)", "Ramen (라면)", "Pizza (피자)", "Hamburger (햄버거)", "Taco (타코)", "Burrito (부리토)", "Dim Sum (딤섬)", "Peking Duck (북경오리)", "Pho (쌀국수)", "Pad Thai (팟타이)", "Bagel (베이글)", "Macaron (마카롱)", "Gelato (젤라토)", "Brownie (브라우니)", "Waffle (와플)", "Pancake (팬케이크)", "Acaibowl (아사이볼)", "Salad (샐러드)", "Sandwich (샌드위치)", "Tonkatsu (돈가스)", "Udon (우동)", "Tempura (튀김)", "Kebab (케밥)", "Gyros (기로스)", "Risotto (리조또)", "Lasagna (라자냐)", "Clam Chowder (클램 차우더)", "Galbi (갈비)", "Naengmyeon (냉면)", "Dakgalbi (닭갈비)", "Yukhoe (육회)", "Gimbap (김밥)", "Japchae (잡채)", "Donut (도넛)", "Hot Dog (핫도그)", "BBQ Ribs (바비큐 립)", "Buffalo Wings (버팔로 윙)", "Omelette (오믈렛)", "Truffle Pasta (트러플 파스타)", "Bingsu (빙수)", "Malatang (마라탕)", "Tanghulu (탕후루)", "Tiramisu (티라미수)", "Croissant (크로와상)", "Cheesecake (치즈케이크)", "Mojito (모히또)", "Sangria (샹그리아)", "Soju (소주)", "Croque Monsieur (크로크무슈)", "Fish and Chips (피쉬앤칩스)", "Paella (파에야)", "Poutine (푸틴)", "Hummus (후무스)", "Falafel (팔라펠)", "Gnocchi (뇨끼)", "Ratatouille (라따뚜이)", "Sashimi (사시미)", "Unagi (장어구이)", "Shabu Shabu (샤브샤브)", "Mapo Tofu (마포두부)", "Spring Roll (스프링롤)", "Naan (난)", "Curry (카레)", "Churros (츄러스)", "Fondue (퐁듀)", "Goulash (굴라쉬)", "Escargot (에스카르고)", "Tapas (타파스)", "Miso Soup (미소된장국)", "Dumplings (만두)", "Kimchi (김치)", "Kalguksu (칼국수)", "Bossam (보쌈)", "Jokbal (족발)", "Gamjatang (감자탕)", "Sundae (순대)", "Mandu (만두)", "Pajeon (파전)", "Yakgwa (약과)", "Sikhye (식혜)", "Sujeonggwa (수정과)", "Dalgona (달고나)", "Honey Bread (허니브레드)", "Egg Drop (에그드랍)", "Gyeran-mari (계란말이)", "Dubu-kimchi (두부김치)", "Golbaengi-muchim (골뱅이무침)", "Jeon (전)", "Mandu-guk (만둣국)", "Sujebi (수제비)", "Kimbap (김밥)", "Jajangmyeon (짜장면)", "Jjamppong (짬뽕)"]
     };
 
-    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v14')) || [];
-    let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [];
+    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v15')) || [];
+    let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [], rollInterval;
 
     window.onload = () => { loadDial('v1'); renderAdmin(); updateArchiveUI(); };
 
@@ -226,16 +225,26 @@
         document.getElementById('spinBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
         let pos = 0;
-        rollInterval = setInterval(() => { pos -= 14; if(Math.abs(pos) >= document.getElementById('pickerTrack').scrollHeight / 2) pos = 0; document.getElementById('pickerTrack').style.transform = `translateY(${pos}px)`; }, 16);
+        rollInterval = setInterval(() => { 
+            pos -= 14; 
+            if(Math.abs(pos) >= document.getElementById('pickerTrack').scrollHeight / 2) pos = 0; 
+            document.getElementById('pickerTrack').style.transform = `translateY(${pos}px)`; 
+        }, 16);
     }
 
     function stopSpin() {
         clearInterval(rollInterval);
         const track = document.getElementById('pickerTrack');
         const finalIdx = Math.floor(Math.random() * (track.children.length/2)) + Math.floor(track.children.length/2);
+        
         track.style.transition = "transform 3s cubic-bezier(0.1, 0, 0.1, 1)";
-        track.style.transform = `translateY(${-(finalIdx * 44) + 66}px)`;
-        setTimeout(() => startPractice(track.children[finalIdx].children[0].innerText), 3500);
+        track.style.transform = `translateY(${-(finalIdx * 44) + 68}px)`;
+
+        setTimeout(() => {
+            const selectedNode = track.children[finalIdx];
+            selectedNode.classList.add('active', 'bounce-effect'); // 바운스 및 활성화
+            setTimeout(() => startPractice(selectedNode.children[0].innerText), 1500);
+        }, 3100);
     }
 
     function startPractice(topic) {
@@ -310,7 +319,7 @@
             full_text: data.user_speech
         };
         studyArchive.unshift(entry);
-        localStorage.setItem('study_archive_v14', JSON.stringify(studyArchive));
+        localStorage.setItem('study_archive_v15', JSON.stringify(studyArchive));
     }
 
     function renderFeedbackView(res, fullText, containerId) {
@@ -331,10 +340,9 @@
         document.getElementById(containerId).innerHTML = html;
     }
 
-    // [복구] 가독성이 뛰어난 VOCAB 리스트 디자인
     function updateArchiveUI() {
         const list = document.getElementById('archiveList');
-        if(studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px;'>학습 기록이 없습니다.</p>"; return; }
+        if(studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px;'>기록이 없습니다.</p>"; return; }
         list.innerHTML = studyArchive.map(e => {
             const first = e.sentences[0] || { orig: "...", better_en: "..." };
             return `
@@ -362,8 +370,8 @@
     }
 
     function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
-    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("기록을 삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v14', JSON.stringify(studyArchive)); updateArchiveUI(); } }
-    function clearArchive() { if(confirm("모든 기록을 삭제할까요?")) { studyArchive = []; localStorage.setItem('study_archive_v14', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("기록을 삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v15', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function clearArchive() { if(confirm("모든 기록을 삭제할까요?")) { studyArchive = []; localStorage.setItem('study_archive_v15', JSON.stringify(studyArchive)); updateArchiveUI(); } }
 
     function renderAdmin() {
         const cont = document.getElementById('adminContent');
@@ -380,7 +388,7 @@
 
     function addWord(c) {
         const val = document.getElementById(`add-${c}`).value.trim();
-        if(!val) return; db[c].unshift(val); localStorage.setItem('speaking_db_v14', JSON.stringify(db));
+        if(!val) return; db[c].unshift(val); localStorage.setItem('speaking_db_v15', JSON.stringify(db));
         document.getElementById(`add-${c}`).value = ""; renderAdmin();
     }
 </script>
