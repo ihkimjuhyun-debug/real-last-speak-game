@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Master: Pro Elite v27</title>
+    <title>Speaking Master: Pro Elite v28</title>
     <style>
         :root { 
             --apple-navy: #1C1C1E; --ios-blue: #007AFF; --ios-red: #FF3B30; 
@@ -11,7 +11,6 @@
             --deep-green-text: #2E7D32; --border: #D1D1D6; 
             --bubble-gray: #F8F8FA;
         }
-        /* [디자인 복구] 고딕체 폰트 및 부드러운 안티앨리어싱 */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; 
             background: var(--ios-bg); margin: 0; color: var(--apple-navy); 
@@ -27,79 +26,66 @@
         .section { display: none; padding: 20px; animation: slideUp 0.4s ease-out; }
         .section.active { display: block; }
 
-        /* [디자인 복구] 게임 모드 스위치 버튼 */
+        /* 게임 모드 스위치 */
         .mode-switch { display: flex; gap: 8px; margin-bottom: 12px; }
-        .sub-btn { 
-            flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border); 
-            background: #fff; font-size: 12px; font-weight: 800; color: #8E8E93; 
-            cursor: pointer; transition: 0.2s; 
-        }
+        .sub-btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: #fff; font-size: 12px; font-weight: 800; color: #8E8E93; cursor: pointer; transition: 0.2s; }
         .sub-btn.active { background: var(--ios-blue); color: #fff; border-color: var(--ios-blue); box-shadow: 0 4px 12px rgba(0,122,255,0.3); }
 
         /* 직접 선택 그리드 */
         .selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-height: 480px; overflow-y: auto; padding: 10px 2px; }
-        .grid-item { 
-            background: #fff; padding: 20px 10px; border-radius: 18px; 
-            font-size: 14px; font-weight: 800; text-align: center; 
-            border: 1px solid var(--border); cursor: pointer; transition: 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03); color: var(--dial-navy);
-        }
+        .grid-item { background: #fff; padding: 20px 10px; border-radius: 18px; font-size: 14px; font-weight: 800; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.03); color: var(--dial-navy); }
         .grid-item:active { background: var(--ios-blue); color: #fff; transform: scale(0.97); }
 
-        /* [디자인 복구] 점수 & 원형 UI */
+        /* 피드백 UI */
         .score-container { text-align: center; margin-bottom: 35px; }
-        .score-circle { 
-            display: inline-block; width: 100px; height: 100px; line-height: 100px; 
-            border-radius: 50%; background: var(--apple-navy); color: #fff; 
-            font-size: 36px; font-weight: 900; box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
-        }
+        .score-circle { display: inline-block; width: 100px; height: 100px; line-height: 100px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 36px; font-weight: 900; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         .score-comment { font-size: 15px; font-weight: 800; color: #555; margin-top: 15px; white-space: pre-line; }
 
-        /* [디자인 복구] 말풍선 가독성 */
         .compare-box { margin-bottom: 45px; border-bottom: 1.5px solid #E5E5EA; padding-bottom: 40px; }
         .label-text { font-size: 10px; font-weight: 800; color: #8E8E93; display: block; margin-bottom: 6px; letter-spacing: 1px; }
         .orig-sentence { background: var(--bubble-gray); color: #424245; padding: 18px 20px; border-radius: 20px; font-size: 15px; font-weight: 500; margin-bottom: 15px; border: 1px solid #EAEAEA; border-left: 6px solid #D1D1D6; line-height: 1.6; text-align: left; }
-        .better-sentence { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 18px 20px; border-radius: 20px; font-size: 16px; font-weight: 800; border-left: 6px solid var(--deep-green-text); line-height: 1.6; text-align: left; margin-bottom: 10px; }
+        .better-sentence { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 18px 20px; border-radius: 20px; font-size: 16px; font-weight: 800; border-left: 6px solid var(--deep-green-text); line-height: 1.6; text-align: left; margin-bottom: 8px; }
+
+        /* [신규] 한국어 해석 말풍선 스타일 */
+        .ko-bubble {
+            background: #F0F9F1; /* 영어 말풍선보다 미세하게 더 연한 그린 */
+            color: var(--deep-green-text);
+            padding: 10px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-block;
+            border: 1px solid #E0EEE1;
+            margin-top: 2px;
+            text-align: left;
+            position: relative;
+        }
+
         .tip-card { background: #fff; padding: 18px; border-radius: 18px; border: 1px solid #EEE; margin-top: 15px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
 
-        /* [디자인 복구] 녹음 패널 파형 */
-        .recording-panel {
-            display: none; background: #fff; border-radius: 24px; padding: 15px 20px;
-            margin-top: 20px; align-items: center; justify-content: space-between; gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1.5px solid var(--ios-red);
-        }
+        /* 녹음 패널 */
+        .recording-panel { display: none; background: #fff; border-radius: 24px; padding: 15px 20px; margin-top: 20px; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1.5px solid var(--ios-red); }
         .waveform-container { display: flex; align-items: center; gap: 3.5px; height: 40px; flex: 2.5; overflow: hidden; justify-content: flex-start; }
         .wave-bar { width: 3.5px; background: var(--ios-red); border-radius: 2px; height: 4px; transition: height 0.05s ease; flex-shrink: 0; }
         .timer-display { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 20px; color: var(--apple-navy); flex: 1.2; text-align: center; }
         .stop-mini-btn { background: var(--ios-red); color: white; border: none; padding: 12px 18px; border-radius: 14px; font-weight: 800; cursor: pointer; flex: 1.2; font-size: 14px; }
 
-        /* [디자인 복구] 보관함(Vocab) 카드 */
-        .archive-card { 
-            background: #fff; padding: 22px; border-radius: 24px; margin-bottom: 15px; 
-            border: 1px solid var(--border); cursor: pointer; display: flex; 
-            flex-direction: column; gap: 10px; text-align: left; 
-        }
-
-        /* [디자인 복구] 어드민 레드 X */
+        /* 어드민 레드 X */
         .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .admin-item { background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .admin-item.disabled { background: #E5E5EA; opacity: 0.6; }
         .del-btn { background: var(--ios-red); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 14px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
 
-        /* [디자인 복구] 다이얼 UI */
-        .picker-frame { 
-            position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%);
-        }
+        .btn-apple { width: 100%; height: 60px; border-radius: 18px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
+        .btn-blue { background: var(--ios-blue); color: white; }
+        .btn-red { background: var(--ios-red); color: white; }
+
+        /* 다이얼 UI */
+        .picker-frame { position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%); }
         .picker-frame::before { content: ""; position: absolute; left: 8px; right: 8px; top: 68px; height: 44px; background: rgba(0, 0, 0, 0.04); border-radius: 10px; z-index: 1; pointer-events: none; }
         .picker-track { position: absolute; width: 100%; top: 0; }
         .picker-node { height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 17px; color: var(--dial-navy); transition: 0.3s ease; opacity: 0.4; }
         .picker-node.active { opacity: 1; font-weight: 800; font-size: 21px; color: var(--ios-blue); z-index: 2; }
-
-        .btn-apple { width: 100%; height: 60px; border-radius: 18px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
-        .btn-blue { background: var(--ios-blue); color: white; }
-        .btn-red { background: var(--ios-red); color: white; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -134,17 +120,15 @@
         <div id="play-stage" style="display:none; margin-top:20px; text-align:center;">
             <h3 id="targetTxt" style="font-size:32px; font-weight:900; color:var(--dial-navy); margin-bottom:20px;">Topic</h3>
             <div id="recordingPanel" class="recording-panel">
-                <div class="waveform-container" id="waveform">
-                    <script>for(let i=0; i<40; i++) document.write('<div class="wave-bar"></div>');</script>
-                </div>
+                <div class="waveform-container" id="waveform"><script>for(let i=0; i<40; i++) document.write('<div class="wave-bar"></div>');</script></div>
                 <div id="recTimer" class="timer-display">00:00</div>
                 <button class="stop-mini-btn" onclick="stopRecording()">STOP</button>
             </div>
             <button id="recordBtn" class="btn-apple btn-red" onclick="startCountdown()">Start Recording</button>
             <div id="analyzingUI" style="display:none;">
-                <p style="font-weight:800; margin-top:25px; color:var(--ios-blue);">AI가 문장을 정밀 분석 중입니다...</p>
+                <p style="font-weight:800; margin-top:25px; color:var(--ios-blue);">AI 분석 중...</p>
                 <div style="width:100%; height:10px; background:#E5E5EA; border-radius:10px; overflow:hidden;"><div id="progressBar" style="width:0%; height:100%; background:var(--ios-blue); transition:0.3s;"></div></div>
-                <span id="progressPercent" style="display:block; font-weight:800; color:var(--ios-blue);">0%</span>
+                <span id="progressPercent" style="display:block; font-weight:800; margin-top:5px; color:var(--ios-blue);">0%</span>
             </div>
             <div id="feedbackArea" style="margin-top:25px;"></div>
             <div id="controlButtons" style="margin-top:20px; display:none; flex-direction:column;">
@@ -154,79 +138,26 @@
         </div>
     </div>
 
-    <div id="sec-vocab" class="section">
-        <h2 style="font-weight: 900;">Study Archive</h2>
-        <div id="archiveList"></div>
-    </div>
+    <div id="sec-vocab" class="section"><h2 style="font-weight: 900;">Study Archive</h2><div id="archiveList"></div></div>
     <div id="sec-admin" class="section"><div id="adminContent"></div></div>
 </div>
 
 <script>
-    // [데이터 보존] 장소 40개, 음식 100개
     const DEFAULT_DB = {
         v1: ["Gym (체육관)", "Central Park (센트럴 파크)", "Pharmacy (약국)", "Airport (공항)", "Library (도서관)", "Museum (박물관)", "Zoo (동물원)", "Beach (해변)", "Mountain (산)", "Bank (은행)", "Post Office (우체국)", "Hospital (병원)", "University (대학교)", "Starbucks (스타벅스)", "Subway (지하철)", "Luxury Hotel (고급 호텔)", "Stadium (경기장)", "City Hall (시청)", "Harbor (항구)", "Amusement Park (놀이공원)", "Art Gallery (미술관)", "Police Station (경찰서)", "Fire Station (소방서)", "Castle (성)", "Temple (사원)", "Church (교회)", "Gas Station (주유소)", "Flower Shop (꽃집)", "Department Store (백화점)", "Market (시장)", "Cinema (영화관)", "Theater (극장)", "Concert Hall (콘서트 홀)", "Square (광장)", "Bridge (다리)", "Desert (사막)", "Forest (숲)", "Jungle (정글)", "Island (섬)", "Port (항구)"],
         v2: ["Fried Chicken (치킨)", "Kimchi Stew (김치찌개)", "Bulgogi (불고기)", "Tteokbokki (떡볶이)", "Bibimbap (비빔밥)", "Pasta (파스타)", "Steak (스테이크)", "Sushi (초밥)", "Ramen (라면)", "Pizza (피자)", "Hamburger (햄버거)", "Taco (타코)", "Burrito (부리토)", "Dim Sum (딤섬)", "Peking Duck (북경오리)", "Pho (쌀국수)", "Pad Thai (팟타이)", "Bagel (베이글)", "Macaron (마카롱)", "Gelato (젤라토)", "Brownie (브라우니)", "Waffle (와플)", "Pancake (팬케이크)", "Acaibowl (아사이볼)", "Salad (샐러드)", "Sandwich (샌드위치)", "Tonkatsu (돈가스)", "Udon (우동)", "Tempura (튀김)", "Kebab (케밥)", "Gyros (기로스)", "Risotto (리조또)", "Lasagna (라자냐)", "Clam Chowder (클램 차우더)", "Galbi (갈비)", "Naengmyeon (냉면)", "Dakgalbi (닭갈비)", "Yukhoe (육회)", "Gimbap (김밥)", "Japchae (잡채)", "Donut (도넛)", "Hot Dog (핫도그)", "BBQ Ribs (바비큐 립)", "Buffalo Wings (버팔로 윙)", "Omelette (오멜렛)", "Truffle Pasta (트러플 파스타)", "Bingsu (빙수)", "Malatang (마라탕)", "Tanghulu (탕후루)", "Tiramisu (티라미수)", "Croissant (크로와상)", "Cheesecake (치즈케이크)", "Mojito (모히또)", "Sangria (샹그리아)", "Soju (소주)", "Croque Monsieur (크로크무슈)", "Fish and Chips (피쉬앤칩스)", "Paella (파에야)", "Poutine (푸틴)", "Hummus (후무스)", "Falafel (팔라펠)", "Gnocchi (뇨끼)", "Ratatouille (라따뚜이)", "Sashimi (사시미)", "Unagi (장어구이)", "Shabu Shabu (샤브샤브)", "Mapo Tofu (마포두부)", "Spring Roll (스프링롤)", "Naan (난)", "Curry (카레)", "Churros (츄러스)", "Fondue (퐁듀)", "Goulash (굴라쉬)", "Escargot (에스카르고)", "Tapas (타파스)", "Miso Soup (미소된장국)", "Dumplings (만두)", "Kimchi (김치)", "Kalguksu (칼국수)", "Bossam (보쌈)", "Jokbal (족발)", "Gamjatang (감자탕)", "Sundae (순대)", "Mandu (만두)", "Pajeon (파전)", "Yakgwa (약과)", "Sikhye (식혜)", "Sujeonggwa (수정과)", "Dalgona (달고나)", "Honey Bread (허니브레드)", "Egg Drop (에그드랍)", "Gyeran-mari (계란말이)", "Dubu-kimchi (두부김치)", "Golbaengi-muchim (골뱅이무침)", "Jeon (전)", "Mandu-guk (만둣국)", "Sujebi (수제비)", "Kimbap (김밥)", "Jajangmyeon (짜장면)", "Jjamppong (짬뽕)"]
     };
 
-    let rawDb = JSON.parse(localStorage.getItem('speaking_db_v27')) || DEFAULT_DB;
+    let rawDb = JSON.parse(localStorage.getItem('speaking_db_v28')) || DEFAULT_DB;
     let db = { v1: [], v2: [] };
     ['v1', 'v2'].forEach(c => rawDb[c].forEach(i => db[c].push(typeof i === 'string' ? {val: i, active: true} : i)));
 
-    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v27')) || [];
+    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v28')) || [];
     let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [], recInt, recSeconds = 0, rollInterval;
     let audioCtx, analyser, dataArray, animationId;
 
     window.onload = () => { loadDial('v1'); renderAdmin(); updateArchiveUI(); };
 
-    // [버그 수정] Vocab UI 갱신 및 데이터 동기화
-    function updateArchiveUI() {
-        const list = document.getElementById('archiveList');
-        if(!studyArchive || studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px; color:#888;'>기록이 없습니다.</p>"; return; }
-        list.innerHTML = studyArchive.map(e => {
-            const worst = e.sentences.reduce((prev, cur) => (Math.abs(cur.better_en.length - cur.orig.length) > Math.abs(prev.better_en.length - prev.orig.length) ? cur : prev), e.sentences[0]);
-            return `
-                <div class="archive-card">
-                    <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:var(--ios-blue);">
-                        <span>${e.ts}</span><span style="color:var(--ios-red);" onclick="deleteArchive(${e.id}, event)">삭제</span>
-                    </div>
-                    <div style="font-size:19px; font-weight:900; margin:5px 0;">${e.topic}</div>
-                    <div style="font-size:10px; font-weight:800; color:var(--ios-red);">FOCUS: NEEDS IMPROVEMENT</div>
-                    <div style="font-size:13px; color:#888;">${worst.orig}</div>
-                    <div style="font-size:14px; font-weight:800; color:var(--deep-green-text);">${worst.better_en}</div>
-                </div>`;
-        }).join('');
-    }
-
-    // [버그 수정] 다이얼 정지 및 활성화 상태 복구
-    function handleSpin() {
-        document.getElementById('spinBtn').style.display = 'none';
-        document.getElementById('stopDialBtn').style.display = 'flex';
-        const track = document.getElementById('pickerTrack');
-        track.style.transition = 'none';
-        let pos = 68;
-        rollInterval = setInterval(() => { 
-            pos -= 14; 
-            if(Math.abs(pos) >= track.scrollHeight / 2) pos = 68; 
-            track.style.transform = `translateY(${pos}px)`; 
-        }, 16);
-    }
-
-    function stopSpin() {
-        clearInterval(rollInterval);
-        document.getElementById('stopDialBtn').style.display = 'none';
-        const track = document.getElementById('pickerTrack');
-        const activeList = db[currentCat].filter(i => i.active);
-        const finalIdx = Math.floor(Math.random() * activeList.length) + activeList.length;
-        track.style.transition = "transform 3.0s cubic-bezier(0.1, 0, 0.1, 1)";
-        track.style.transform = `translateY(${-(finalIdx * 44) + 68}px)`;
-        setTimeout(() => {
-            track.querySelectorAll('.picker-node').forEach(n => n.classList.remove('active'));
-            track.children[finalIdx].classList.add('active');
-            setTimeout(() => startPractice(track.children[finalIdx].children[0].innerText), 1500);
-        }, 3100);
-    }
-
-    // [디자인 복구] 점수별 평가 멘트
     function getAIEvaluation(score) {
         if (score >= 95) return "완벽합니다!\n실제 원어민과 대화하는 것 같네요.";
         if (score >= 90) return "훌륭합니다!\n문장력이 뛰어나지만 단어를 더 다채롭게 써보세요.";
@@ -234,13 +165,9 @@
         return "수고하셨습니다!\n지속적인 연습이 실력을 만듭니다.";
     }
 
+    // [수정] 한국어 해석 말풍선 렌더링 적용
     function renderFeedbackView(res, fullText, containerId) {
-        let html = `
-            <div class="score-container">
-                <div class="score-circle">${res.total_score}</div>
-                <div class="score-comment">${getAIEvaluation(res.total_score)}</div>
-            </div>`;
-
+        let html = `<div class="score-container"><div class="score-circle">${res.total_score}</div><div class="score-comment">${getAIEvaluation(res.total_score)}</div></div>`;
         res.sentences.forEach(s => {
             html += `
                 <div class="compare-box">
@@ -248,54 +175,43 @@
                     <div class="orig-sentence">${s.orig}</div>
                     <span class="label-text" style="color:var(--deep-green-text);">AI RECOMMENDED</span>
                     <div class="better-sentence">${s.better_en}</div>
-                    <div style="font-size:14px; color:var(--deep-green-text); font-weight:800; margin-top:8px; padding-left:10px;">${s.better_ko}</div>
+                    <div style="text-align:left; padding-left:5px;">
+                        <div class="ko-bubble">${s.better_ko}</div>
+                    </div>
                     <div class="tip-card">
                         <div style="color:var(--ios-blue); font-size:11px; font-weight:900; margin-bottom:8px;">💡 AI GRAMMAR & NUANCE TIP</div>
                         <div style="font-size:13.5px; color:#444; line-height:1.7;">${s.explanation || "더 자연스럽고 세련된 원어민 표현으로 교정되었습니다."}</div>
                     </div>
                 </div>`;
         });
-        
-        html += `<div style="background:#fff; padding:25px; border-radius:24px; border:1px solid #ddd; margin-top:30px; text-align:left;">
-                    <b class="label-text">FULL TRANSCRIPT</b>
-                    <div style="color:var(--apple-navy); line-height:1.7; font-weight:500;">${fullText}</div>
-                 </div>`;
-
+        html += `<div style="background:#fff; padding:25px; border-radius:24px; border:1px solid #ddd; margin-top:30px; text-align:left;"><b class="label-text">FULL TRANSCRIPT</b><div style="color:var(--apple-navy); line-height:1.7; font-weight:500;">${fullText}</div></div>`;
         document.getElementById(containerId).innerHTML = html;
-        if(containerId === 'feedbackArea') {
-            document.getElementById('controlButtons').style.display = 'flex';
-            document.getElementById('exitBtn').style.display = 'none'; 
-        }
+        if(containerId === 'feedbackArea') { document.getElementById('controlButtons').style.display = 'flex'; document.getElementById('exitBtn').style.display = 'none'; }
     }
 
-    // 시스템 로직 유지
+    function handleSpin() {
+        document.getElementById('spinBtn').style.display = 'none'; document.getElementById('stopDialBtn').style.display = 'flex';
+        const track = document.getElementById('pickerTrack'); track.style.transition = 'none';
+        let pos = 68; rollInterval = setInterval(() => { pos -= 14; if(Math.abs(pos) >= track.scrollHeight / 2) pos = 68; track.style.transform = `translateY(${pos}px)`; }, 16);
+    }
+    function stopSpin() {
+        clearInterval(rollInterval); document.getElementById('stopDialBtn').style.display = 'none';
+        const track = document.getElementById('pickerTrack'); const activeList = db[currentCat].filter(i => i.active);
+        const finalIdx = Math.floor(Math.random() * activeList.length) + activeList.length;
+        track.style.transition = "transform 3.0s cubic-bezier(0.1, 0, 0.1, 1)"; track.style.transform = `translateY(${-(finalIdx * 44) + 68}px)`;
+        setTimeout(() => { track.querySelectorAll('.picker-node').forEach(n => n.classList.remove('active')); track.children[finalIdx].classList.add('active'); setTimeout(() => startPractice(track.children[finalIdx].children[0].innerText), 1500); }, 3100);
+    }
     function goTab(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-'+id.split('-')[1])); if(id === 'sec-vocab') updateArchiveUI(); }
     function setMode(m) { playMode = m; document.getElementById('btn-m-rnd').classList.toggle('active', m==='random'); document.getElementById('btn-m-sel').classList.toggle('active', m==='select'); document.getElementById('random-ui').style.display = m==='random'?'block':'none'; document.getElementById('select-ui').style.display = m==='select'?'block':'none'; if(m==='random') loadDial(currentCat); else renderGrid(); }
     function setCat(c) { currentCat = c; document.getElementById('btn-c-v1').classList.toggle('active', c==='v1'); document.getElementById('btn-c-v2').classList.toggle('active', c==='v2'); if(playMode==='random') loadDial(c); else renderGrid(); }
     function loadDial(type) { const track = document.getElementById('pickerTrack'); track.innerHTML = ""; const active = db[type].filter(i => i.active); [...active, ...active].forEach(i => { const s = i.val.split(' ('); track.innerHTML += `<div class="picker-node"><div>${s[0]}</div><div style="font-size:10px; color:#999;">${s[1]?s[1].replace(')',''):''}</div></div>`; }); track.style.transform = `translateY(68px)`; if(track.children[0]) track.children[0].classList.add('active'); }
     function renderGrid() { document.getElementById('selectionGrid').innerHTML = db[currentCat].filter(i => i.active).map(t => `<div class="grid-item" onclick="startPractice('${t.val}')">${t.val}</div>`).join(''); }
     function startPractice(topic) { document.getElementById('random-ui').style.display='none'; document.getElementById('select-ui').style.display='none'; document.getElementById('cat-nav').style.display='none'; document.querySelector('.mode-switch').style.display='none'; document.getElementById('play-stage').style.display='block'; document.getElementById('targetTxt').innerText=topic; }
-    
-    function startCountdown() {
-        const btn = document.getElementById('recordBtn'); let count = 3; btn.disabled = true;
-        const timer = setInterval(() => { btn.innerText = `READY IN ${count}...`; count--; if(count < 0) { clearInterval(timer); btn.style.display = 'none'; startRecording(); } }, 1000);
-    }
-    async function startRecording() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser();
-            audioCtx.createMediaStreamSource(stream).connect(analyser); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount);
-            mediaRecorder = new MediaRecorder(stream); chunks = [];
-            mediaRecorder.ondataavailable = e => chunks.push(e.data); mediaRecorder.onstop = processAI; mediaRecorder.start();
-            document.getElementById('recordingPanel').style.display = 'flex';
-            recSeconds = 0; recInt = setInterval(() => { recSeconds++; const m = String(Math.floor(recSeconds/60)).padStart(2,'0'), s = String(recSeconds%60).padStart(2,'0'); document.getElementById('recTimer').innerText = `${m}:${s}`; }, 1000);
-            drawWave();
-        } catch(e) { alert("Mic Permission Denied."); location.reload(); }
-    }
+    function startCountdown() { const btn = document.getElementById('recordBtn'); let count = 3; btn.disabled = true; const timer = setInterval(() => { btn.innerText = `READY IN ${count}...`; count--; if(count < 0) { clearInterval(timer); btn.style.display = 'none'; startRecording(); } }, 1000); }
+    async function startRecording() { try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); audioCtx.createMediaStreamSource(stream).connect(analyser); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount); mediaRecorder = new MediaRecorder(stream); chunks = []; mediaRecorder.ondataavailable = e => chunks.push(e.data); mediaRecorder.onstop = processAI; mediaRecorder.start(); document.getElementById('recordingPanel').style.display = 'flex'; recSeconds = 0; recInt = setInterval(() => { recSeconds++; const m = String(Math.floor(recSeconds/60)).padStart(2,'0'), s = String(recSeconds%60).padStart(2,'0'); document.getElementById('recTimer').innerText = `${m}:${s}`; }, 1000); drawWave(); } catch(e) { alert("Mic Permission Denied."); location.reload(); } }
     function drawWave() { animationId = requestAnimationFrame(drawWave); analyser.getByteFrequencyData(dataArray); const bars = document.querySelectorAll('.wave-bar'); bars.forEach((bar, i) => { bar.style.height = Math.max(4, (dataArray[i % dataArray.length] / 128.0) * 45) + 'px'; }); }
     function stopRecording() { mediaRecorder.stop(); clearInterval(recInt); cancelAnimationFrame(animationId); if(audioCtx) audioCtx.close(); document.getElementById('recordingPanel').style.display = 'none'; document.getElementById('analyzingUI').style.display = 'block'; startProgressBar(); }
     function startProgressBar() { let w = 0; const bar = document.getElementById('progressBar'), per = document.getElementById('progressPercent'); const iv = setInterval(() => { if(w>=96) clearInterval(iv); else { w++; bar.style.width = w+'%'; per.innerText = w+'%'; } }, 150); }
-
     async function processAI() {
         const blob = new Blob(chunks, { type: 'audio/m4a' }); const reader = new FileReader(); reader.readAsDataURL(blob);
         reader.onloadend = async () => {
@@ -307,12 +223,13 @@
             } catch (e) { alert("Analysis Failed."); location.reload(); }
         };
     }
-    function saveToArchive(data, topic) { studyArchive.unshift({ id: Date.now(), ts: new Date().toLocaleString(), topic: topic, score: data.total_score, sentences: data.sentences, full_text: data.user_speech }); localStorage.setItem('study_archive_v27', JSON.stringify(studyArchive)); }
-    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v27', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function saveToArchive(data, topic) { studyArchive.unshift({ id: Date.now(), ts: new Date().toLocaleString(), topic: topic, score: data.total_score, sentences: data.sentences, full_text: data.user_speech }); localStorage.setItem('study_archive_v28', JSON.stringify(studyArchive)); }
+    function updateArchiveUI() { document.getElementById('archiveList').innerHTML = studyArchive.map(e => `<div class="archive-card"> <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:var(--ios-blue);"> <span>${e.ts}</span><span style="color:var(--ios-red);" onclick="deleteArchive(${e.id}, event)">삭제</span> </div> <div style="font-size:19px; font-weight:900; margin:5px 0;">${e.topic}</div> </div>`).join(''); }
     function renderAdmin() { const cont = document.getElementById('adminContent'); cont.innerHTML = ['v1', 'v2'].map(c => `<div style="background:#fff; padding:20px; border-radius:22px; border:1px solid var(--border); margin-bottom:15px;"><div style="font-weight:900; margin-bottom:10px;">${c==='v1'?'Places':'Food'} (${db[c].length})</div><div class="admin-grid">${db[c].map((item, idx) => `<div class="admin-item ${item.active?'':'disabled'}" onclick="toggleWord('${c}', ${idx})"><span>${item.val}</span><button class="del-btn" onclick="deleteWord('${c}', ${idx}, event)">×</button></div>`).join('')}</div></div>`).join(''); }
     function toggleWord(c, idx) { db[c][idx].active = !db[c][idx].active; saveDb(); renderAdmin(); }
     function deleteWord(c, idx, ev) { ev.stopPropagation(); if(confirm("Delete?")) { db[c].splice(idx, 1); saveDb(); renderAdmin(); } }
-    function saveDb() { localStorage.setItem('speaking_db_v27', JSON.stringify(db)); }
+    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v28', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function saveDb() { localStorage.setItem('speaking_db_v28', JSON.stringify(db)); }
 </script>
 </body>
 </html>
