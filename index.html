@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Master: Pro Elite v21</title>
+    <title>Speaking Master: Pro Elite v22</title>
     <style>
         :root { 
             --apple-navy: #1D1D1F; --ios-blue: #007AFF; --ios-red: #FF3B30; 
@@ -22,41 +22,29 @@
         .section { display: none; padding: 20px; animation: slideUp 0.4s ease-out; }
         .section.active { display: block; }
 
-        /* Buttons & Controls */
         .mode-switch { display: flex; gap: 8px; margin-bottom: 12px; }
         .sub-btn { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #fff; font-size: 12px; font-weight: 800; color: #86868B; cursor: pointer; transition: 0.2s; }
         .sub-btn.active { background: var(--ios-blue); color: #fff; border-color: var(--ios-blue); box-shadow: 0 4px 10px rgba(0,122,255,0.3); }
 
-        /* Dial UI */
-        .picker-frame { 
-            position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%);
-        }
-        .picker-frame::before { content: ""; position: absolute; left: 8px; right: 8px; top: 68px; height: 44px; background: rgba(0, 0, 0, 0.04); border-radius: 10px; z-index: 1; pointer-events: none; }
-        .picker-track { position: absolute; width: 100%; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); top: 0; }
-        .picker-node { height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 17px; color: var(--dial-navy); transition: 0.3s ease; opacity: 0.4; }
-        .picker-node.active { opacity: 1; font-weight: 800; font-size: 21px; color: var(--ios-blue); z-index: 2; }
-
-        /* [수정 1, 5] 녹음 패널: 파형 길이 대폭 연장 */
+        /* [수정 2] 녹음 패널 레이아웃 최적화 */
         .recording-panel {
             display: none; background: #fff; border-radius: 24px; padding: 15px 20px;
-            margin-top: 20px; align-items: center; justify-content: space-between; gap: 10px;
+            margin-top: 20px; align-items: center; justify-content: space-between; gap: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1.5px solid var(--ios-red);
         }
-        .waveform-container { display: flex; align-items: center; gap: 3px; height: 40px; flex: 4; overflow: hidden; justify-content: flex-start; } /* flex: 4로 확장 */
+        .waveform-container { display: flex; align-items: center; gap: 3px; height: 40px; flex: 3; overflow: hidden; justify-content: flex-start; } /* 왼쪽부터 중간까지 */
         .wave-bar { width: 3.5px; background: var(--ios-red); border-radius: 2px; height: 4px; transition: height 0.1s ease; }
-        .timer-display { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 20px; color: var(--apple-navy); flex: 1.2; text-align: center; }
-        .stop-mini-btn { background: var(--ios-red); color: white; border: none; padding: 12px 18px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .timer-display { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 20px; color: var(--apple-navy); flex: 1.5; text-align: center; } /* 중간부터 오른쪽 중간 */
+        .stop-mini-btn { background: var(--ios-red); color: white; border: none; padding: 12px 0; border-radius: 12px; font-weight: 800; cursor: pointer; flex: 1.2; } /* 오른쪽 중간부터 끝까지 */
 
-        /* [수정 2, 3] End Game 버튼: 1/3 사이즈 및 가시성 조절 */
+        /* [수정 1, 3] End Game 버튼 사이즈 조정 (Start Recording의 절반) */
         .btn-exit-mini { 
-            width: 33%; height: 45px; border-radius: 14px; background: #8E8E93; color: white; 
-            border: none; font-size: 13px; font-weight: 700; cursor: pointer; margin: 10px auto; 
+            width: 50%; height: 50px; border-radius: 16px; background: #8E8E93; color: white; 
+            border: none; font-size: 14px; font-weight: 700; cursor: pointer; margin: 15px auto; 
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* [수정 4] 피드백 상세 팁 가이드 */
+        /* 피드백 모드 디자인 (디테일 팁 포함) */
         .compare-box { margin-bottom: 40px; border-bottom: 1.5px solid #E5E5EA; padding-bottom: 35px; animation: slideUp 0.5s ease-out; }
         .orig-sentence { background: var(--bubble-gray); color: #424245; padding: 16px 20px; border-radius: 18px; font-size: 15px; font-weight: 500; margin-bottom: 10px; border: 1px solid #EAEAEA; border-left: 6px solid #D2D2D7; line-height: 1.6; text-align: left; }
         .better-sentence { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 16px 20px; border-radius: 18px; font-size: 16px; font-weight: 700; border-left: 6px solid var(--deep-green-text); line-height: 1.6; text-align: left; }
@@ -66,24 +54,25 @@
         .tip-content { font-size: 13.5px; color: #444; line-height: 1.7; }
         .tip-content mark { background: #E3F2FD; color: var(--ios-blue); padding: 1px 4px; border-radius: 4px; font-weight: 700; }
 
-        /* [수정 5] Vocab Card 복구 */
+        /* Vocab Card */
         .archive-card { background: #fff; padding: 22px; border-radius: 24px; margin-bottom: 15px; border: 1px solid var(--border); cursor: pointer; display: flex; flex-direction: column; gap: 10px; text-align: left; transition: 0.2s; }
         .archive-card:active { transform: scale(0.98); background: #f9f9f9; }
-        
-        /* Admin Grid (디자인 유지) */
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .admin-item { background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .admin-item.disabled { background: #E5E5EA; opacity: 0.6; }
-        .del-btn { background: var(--ios-red); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 14px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
+        /* [수정 4] 버튼 높이 통일 */
         .btn-apple { width: 100%; height: 60px; border-radius: 18px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
         .btn-blue { background: var(--ios-blue); color: white; }
         .btn-red { background: var(--ios-red); color: white; }
 
+        /* Dial UI 시스템 (유지) */
+        .picker-frame { position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%); }
+        .picker-frame::before { content: ""; position: absolute; left: 8px; right: 8px; top: 68px; height: 44px; background: rgba(0, 0, 0, 0.04); border-radius: 10px; z-index: 1; pointer-events: none; }
+        .picker-track { position: absolute; width: 100%; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); top: 0; }
+        .picker-node { height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 17px; color: var(--dial-navy); transition: 0.3s ease; opacity: 0.4; }
+        .picker-node.active { opacity: 1; font-weight: 800; font-size: 21px; color: var(--ios-blue); z-index: 2; }
+
         .progress-container { width: 100%; height: 10px; background: #E5E5EA; border-radius: 10px; margin: 25px 0 10px 0; overflow: hidden; display: none; }
         .progress-bar { width: 0%; height: 100%; background: var(--ios-blue); transition: width 0.3s ease; }
-        .score-circle { display: inline-block; width: 90px; height: 90px; line-height: 90px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 28px; font-weight: 900; margin-bottom: 12px; }
-
+        
         /* Detail View */
         #detail-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--ios-bg); z-index: 2000; overflow-y: auto; }
         .detail-header { position: sticky; top: 0; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); padding: 15px 20px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
@@ -123,7 +112,7 @@
             
             <div id="recordingPanel" class="recording-panel">
                 <div class="waveform-container" id="waveform">
-                    <script>for(let i=0; i<30; i++) document.write('<div class="wave-bar"></div>');</script>
+                    <script>for(let i=0; i<35; i++) document.write('<div class="wave-bar"></div>');</script>
                 </div>
                 <div id="recTimer" class="timer-display">00:00</div>
                 <button class="stop-mini-btn" onclick="stopRecording()">STOP</button>
@@ -165,17 +154,17 @@
 </div>
 
 <script>
-    // [데이터 유지] 장소 40개, 음식 100개
+    // [데이터 완벽 유지] 장소 40개, 음식 100개
     const DEFAULT_DB = {
         v1: ["Gym (체육관)", "Central Park (센트럴 파크)", "Pharmacy (약국)", "Airport (공항)", "Library (도서관)", "Museum (박물관)", "Zoo (동물원)", "Beach (해변)", "Mountain (산)", "Bank (은행)", "Post Office (우체국)", "Hospital (병원)", "University (대학교)", "Starbucks (스타벅스)", "Subway (지하철)", "Luxury Hotel (고급 호텔)", "Stadium (경기장)", "City Hall (시청)", "Harbor (항구)", "Amusement Park (놀이공원)", "Art Gallery (미술관)", "Police Station (경찰서)", "Fire Station (소방서)", "Castle (성)", "Temple (사원)", "Church (교회)", "Gas Station (주유소)", "Flower Shop (꽃집)", "Department Store (백화점)", "Market (시장)", "Cinema (영화관)", "Theater (극장)", "Concert Hall (콘서트 홀)", "Square (광장)", "Bridge (다리)", "Desert (사막)", "Forest (숲)", "Jungle (정글)", "Island (섬)", "Port (항구)"],
         v2: ["Fried Chicken (치킨)", "Kimchi Stew (김치찌개)", "Bulgogi (불고기)", "Tteokbokki (떡볶이)", "Bibimbap (비빔밥)", "Pasta (파스타)", "Steak (스테이크)", "Sushi (초밥)", "Ramen (라면)", "Pizza (피자)", "Hamburger (햄버거)", "Taco (타코)", "Burrito (부리토)", "Dim Sum (딤섬)", "Peking Duck (북경오리)", "Pho (쌀국수)", "Pad Thai (팟타이)", "Bagel (베이글)", "Macaron (마카롱)", "Gelato (젤라토)", "Brownie (브라우니)", "Waffle (와플)", "Pancake (팬케이크)", "Acaibowl (아사이볼)", "Salad (샐러드)", "Sandwich (샌드위치)", "Tonkatsu (돈가스)", "Udon (우동)", "Tempura (튀김)", "Kebab (케밥)", "Gyros (기로스)", "Risotto (리조또)", "Lasagna (라자냐)", "Clam Chowder (클램 차우더)", "Galbi (갈비)", "Naengmyeon (냉면)", "Dakgalbi (닭갈비)", "Yukhoe (육회)", "Gimbap (김밥)", "Japchae (잡채)", "Donut (도넛)", "Hot Dog (핫도그)", "BBQ Ribs (바비큐 립)", "Buffalo Wings (버팔로 윙)", "Omelette (오멜렛)", "Truffle Pasta (트러플 파스타)", "Bingsu (빙수)", "Malatang (마라탕)", "Tanghulu (탕후루)", "Tiramisu (티라미수)", "Croissant (크로와상)", "Cheesecake (치즈케이크)", "Mojito (모히또)", "Sangria (샹그리아)", "Soju (소주)", "Croque Monsieur (크로크무슈)", "Fish and Chips (피쉬앤칩스)", "Paella (파에야)", "Poutine (푸틴)", "Hummus (후무스)", "Falafel (팔라펠)", "Gnocchi (뇨끼)", "Ratatouille (라따뚜이)", "Sashimi (사시미)", "Unagi (장어구이)", "Shabu Shabu (샤브샤브)", "Mapo Tofu (마포두부)", "Spring Roll (스프링롤)", "Naan (난)", "Curry (카레)", "Churros (츄러스)", "Fondue (퐁듀)", "Goulash (굴라쉬)", "Escargot (에스카르고)", "Tapas (타파스)", "Miso Soup (미소된장국)", "Dumplings (만두)", "Kimchi (김치)", "Kalguksu (칼국수)", "Bossam (보쌈)", "Jokbal (족발)", "Gamjatang (감자탕)", "Sundae (순대)", "Mandu (만두)", "Pajeon (파전)", "Yakgwa (약과)", "Sikhye (식혜)", "Sujeonggwa (수정과)", "Dalgona (달고나)", "Honey Bread (허니브레드)", "Egg Drop (에그드랍)", "Gyeran-mari (계란말이)", "Dubu-kimchi (두부김치)", "Golbaengi-muchim (골뱅이무침)", "Jeon (전)", "Mandu-guk (만둣국)", "Sujebi (수제비)", "Kimbap (김밥)", "Jajangmyeon (짜장면)", "Jjamppong (짬뽕)"]
     };
 
-    let rawDb = JSON.parse(localStorage.getItem('speaking_db_v21')) || DEFAULT_DB;
+    let rawDb = JSON.parse(localStorage.getItem('speaking_db_v22')) || DEFAULT_DB;
     let db = { v1: [], v2: [] };
     ['v1', 'v2'].forEach(c => rawDb[c].forEach(i => db[c].push(typeof i === 'string' ? {val: i, active: true} : i)));
 
-    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v21')) || [];
+    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v22')) || [];
     let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [], recInt, recSeconds = 0;
     let audioCtx, analyser, dataArray, animationId, rollInterval;
 
@@ -209,7 +198,7 @@
                 document.getElementById('recTimer').innerText = `${m}:${s}`;
             }, 1000);
             drawWave();
-        } catch(e) { alert("Mic Error."); location.reload(); }
+        } catch(e) { alert("Mic Permission Denied."); location.reload(); }
     }
 
     function drawWave() {
@@ -232,11 +221,12 @@
         const iv = setInterval(() => { if (w >= 96) clearInterval(iv); else { w++; bar.style.width = w + '%'; per.innerText = w + '%'; } }, 150);
     }
 
-    // [수정 4] 상세 팁 렌더링
+    // [수정 3] 디테일하고 다이나믹한 티칭 팁 가이드
     function renderFeedbackView(res, fullText, containerId) {
         let html = `<div style="text-align:center; margin-bottom:30px;"><div class="score-circle">${res.total_score}점</div></div>`;
-        res.sentences.forEach(s => {
-            const tip = s.explanation || "이 추천 문장은 더 세련되고 상황에 적합한 표현입니다.";
+        res.sentences.forEach((s, idx) => {
+            // 목업 데이터용 다이나믹 팁 생성 (실제 API 응답의 explanation 필드를 최우선 사용)
+            const tip = s.explanation || getDynamicTip(s.orig, s.better_en);
             html += `
                 <div class="compare-box">
                     <span style="font-size:10px; font-weight:800; color:#8E8E93; display:block; margin-bottom:5px;">MY SPEECH</span>
@@ -253,8 +243,16 @@
         document.getElementById(containerId).innerHTML = html;
         if(containerId === 'feedbackArea') {
             document.getElementById('controlButtons').style.display = 'flex';
-            document.getElementById('exitBtn').style.display = 'none'; // [수정 2] 분석 완료 시 End Game 숨김
+            document.getElementById('exitBtn').style.display = 'none'; 
         }
+    }
+
+    // 단순 목업용 팁 생성 로직 (실제로는 API에서 주는 문장을 표시함)
+    function getDynamicTip(orig, better) {
+        if (orig.toLowerCase().includes("go to there")) return "장소 부사인 <mark>there</mark> 앞에는 전치사 'to'가 필요 없습니다. 'go there'가 올바른 표현입니다.";
+        if (better.toLowerCase().includes("let's")) return "명령형보다 <mark>Let's</mark>를 사용하면 훨씬 부드럽고 자연스러운 제안의 어감을 줍니다.";
+        if (better.toLowerCase().includes("visit")) return "단순히 'go'보다 <mark>visit</mark>을 사용하면 문장이 더 세련되고 구체적으로 들립니다.";
+        return "관사 사용과 시제 일치에 주의하여 문장을 더 정교하게 구성했습니다.";
     }
 
     function handleSpin() {
@@ -278,22 +276,29 @@
         }, 3100);
     }
 
-    // [수정 5] Vocab 복구 및 상세 보기
+    // [수정 4] Vocab 개선: 가장 개선이 필요한 문장 표시
     function updateArchiveUI() {
         const list = document.getElementById('archiveList');
         if(!studyArchive.length) { list.innerHTML = "<p style='text-align:center; padding:50px; color:#888;'>기록이 없습니다.</p>"; return; }
-        list.innerHTML = studyArchive.map(e => `
-            <div class="archive-card" onclick="openDetail(${e.id})">
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800; color:var(--ios-blue);">
-                    <span>${e.ts}</span>
-                    <span style="color:var(--ios-red);" onclick="deleteArchive(${e.id}, event)">삭제</span>
-                </div>
-                <div style="font-size:19px; font-weight:900;">${e.topic}</div>
-                <div style="margin-top:5px;">
-                    <div style="font-size:13px; color:#888;">${e.sentences[0]?.orig || "..."}</div>
-                    <div style="font-size:14px; font-weight:800; color:var(--deep-green-text);">${e.sentences[0]?.better_en || "..."}</div>
-                </div>
-            </div>`).join('');
+        list.innerHTML = studyArchive.map(e => {
+            // [로직] 문장들 중 개선 폭(길이 차이 등)이 가장 큰 'worst' 문장 찾기
+            const worstSentence = e.sentences.reduce((prev, current) => {
+                return (Math.abs(current.better_en.length - current.orig.length) > Math.abs(prev.better_en.length - prev.orig.length)) ? current : prev;
+            });
+            return `
+                <div class="archive-card" onclick="openDetail(${e.id})">
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800; color:var(--ios-blue);">
+                        <span>${e.ts}</span>
+                        <span style="color:var(--ios-red);" onclick="deleteArchive(${e.id}, event)">삭제</span>
+                    </div>
+                    <div style="font-size:19px; font-weight:900;">${e.topic}</div>
+                    <div style="margin-top:5px;">
+                        <div style="font-size:10px; font-weight:800; color:#FF3B30; margin-bottom:3px;">FOCUS: NEEDS IMPROVEMENT</div>
+                        <div style="font-size:13px; color:#888;">${worstSentence.orig}</div>
+                        <div style="font-size:14px; font-weight:800; color:var(--deep-green-text);">${worstSentence.better_en}</div>
+                    </div>
+                </div>`;
+        }).join('');
     }
 
     function openDetail(id) {
@@ -321,12 +326,12 @@
             } catch (e) { alert("Analysis Failed."); location.reload(); }
         };
     }
-    function saveToArchive(data, topic) { studyArchive.unshift({ id: Date.now(), ts: new Date().toLocaleString(), topic: topic, score: data.total_score, sentences: data.sentences, full_text: data.user_speech }); localStorage.setItem('study_archive_v21', JSON.stringify(studyArchive)); }
-    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v21', JSON.stringify(studyArchive)); updateArchiveUI(); } }
-    function clearArchive() { if(confirm("Clear all?")) { studyArchive = []; localStorage.setItem('study_archive_v21', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function saveToArchive(data, topic) { studyArchive.unshift({ id: Date.now(), ts: new Date().toLocaleString(), topic: topic, score: data.total_score, sentences: data.sentences, full_text: data.user_speech }); localStorage.setItem('study_archive_v22', JSON.stringify(studyArchive)); }
+    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v22', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function clearArchive() { if(confirm("Clear all?")) { studyArchive = []; localStorage.setItem('study_archive_v22', JSON.stringify(studyArchive)); updateArchiveUI(); } }
     function toggleWord(c, idx) { db[c][idx].active = !db[c][idx].active; saveDb(); renderAdmin(); }
     function deleteWord(c, idx, ev) { ev.stopPropagation(); if(confirm("Delete?")) { db[c].splice(idx, 1); saveDb(); renderAdmin(); } }
-    function saveDb() { localStorage.setItem('speaking_db_v21', JSON.stringify(db)); }
+    function saveDb() { localStorage.setItem('speaking_db_v22', JSON.stringify(db)); }
     function renderAdmin() { const cont = document.getElementById('adminContent'); cont.innerHTML = ['v1', 'v2'].map(c => `<div style="background:#fff; padding:20px; border-radius:22px; margin-bottom:15px; border:1px solid var(--border);"><div style="font-weight:900; margin-bottom:12px;">${c==='v1'?'Places':'Food'} (${db[c].length})</div><div class="admin-grid">${db[c].map((item, idx) => `<div class="admin-item ${item.active?'':'disabled'}" onclick="toggleWord('${c}', ${idx})"><span style="font-size:12px; font-weight:800;">${item.val}</span><button class="del-btn" onclick="deleteWord('${c}', ${idx}, event)">×</button></div>`).join('')}</div></div>`).join(''); }
 </script>
 </body>
