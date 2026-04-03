@@ -1,4 +1,3 @@
-// api/openai-proxy.js
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -17,8 +16,8 @@ export default async function handler(req, res) {
         formData.append('file', blob, 'audio.m4a');
         formData.append('model', 'whisper-1');
 
-        // 1. Whisper STT: 음성을 텍스트로 변환
-        const sttResponse = await fetch("[https://api.openai.com/v1/audio/transcriptions](https://api.openai.com/v1/audio/transcriptions)", {
+        // 1. Whisper STT
+        const sttResponse = await fetch("https://api.openai.com/v1/audio/transcriptions", {
             method: "POST",
             headers: { "Authorization": `Bearer ${API_KEY}` },
             body: formData
@@ -29,12 +28,10 @@ export default async function handler(req, res) {
 
         const userSpeech = sttData.text;
 
-        // 2. 프롬프트 구조 강제화 (이 부분이 핵심 해결책입니다!)
         const systemRole = `You are an expert English speaking coach. 
-        Your task is to analyze the user's spoken English for the topic: "${topic}".
-        Focus on naturalness, professional vocabulary, and nuanced expressions.`;
+        Your task is to analyze the user's spoken English for the topic: "${topic}".`;
 
-        // AI가 딴짓을 못하도록 JSON 템플릿을 하드코딩해서 줍니다.
+        // ✨ 핵심: AI에게 JSON 형식을 무조건 지키도록 강제
         const instruction = `
         Evaluate the transcription: "${userSpeech}"
         
@@ -52,8 +49,8 @@ export default async function handler(req, res) {
         }
         `;
 
-        // 3. GPT-4o-mini 분석
-        const gptResponse = await fetch("[https://api.openai.com/v1/chat/completions](https://api.openai.com/v1/chat/completions)", {
+        // 3. GPT 분석
+        const gptResponse = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${API_KEY}` },
             body: JSON.stringify({
@@ -70,17 +67,14 @@ export default async function handler(req, res) {
         const gptData = await gptResponse.json();
         if (gptData.error) throw new Error("GPT 에러: " + gptData.error.message);
 
-        // 4. 안전장치: AI가 가끔 마크다운 텍스트(```json)를 포함해서 보내는 경우를 대비해 텍스트 클렌징
+        // 마크다운 제거 안전장치
         let content = gptData.choices[0].message.content.trim();
-        if (content.startsWith('```json')) {
-            content = content.replace(/^```json\n/, '').replace(/\n```$/, '');
-        } else if (content.startsWith('```')) {
-            content = content.replace(/^```\n/, '').replace(/\n```$/, '');
-        }
+        if (content.startsWith('```json')) content = content.replace(/^```json\n/, '').replace(/\n```$/, '');
+        else if (content.startsWith('```')) content = content.replace(/^```\n/, '').replace(/\n```$/, '');
 
         const feedback = JSON.parse(content);
 
-        // 프론트엔드와 데이터 구조를 맞추어 응답 전송
+        // 프론트엔드로 응답
         res.status(200).json({ 
             ...feedback, 
             user_speech: userSpeech 
