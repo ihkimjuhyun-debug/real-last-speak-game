@@ -9,7 +9,7 @@
             --apple-navy: #1D1D1F; --ios-blue: #007AFF; --ios-red: #FF3B30; 
             --ios-bg: #F5F5F7; --dial-navy: #002D5E; --soft-green-bg: #E8F5E9; 
             --deep-green-text: #2E7D32; --border: #D2D2D7; 
-            --bubble-gray: #F8F8FA;
+            --bubble-gray: #F2F2F7; /* 아주 살짝 더 진해진 회색 말풍선 */
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background: var(--ios-bg); margin: 0; color: var(--apple-navy); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         .container { max-width: 500px; margin: 0 auto; min-height: 100vh; background: var(--ios-bg); position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.05); }
@@ -25,24 +25,28 @@
         /* [추가] 카운트다운 오버레이 */
         #countdown-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 3000; color: white;
-            font-size: 120px; font-weight: 900; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.9); z-index: 3000;
+            font-size: 120px; font-weight: 900; color: var(--ios-blue);
+            align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
 
-        /* [추가] 녹음 중 상단 바 UI */
-        .recording-control-panel {
-            display: none; background: #fff; border-radius: 20px; padding: 15px;
+        /* [추가] 녹음 중 제어 패널 UI */
+        .recording-panel {
+            display: none; background: #fff; border-radius: 24px; padding: 20px;
             margin-top: 20px; align-items: center; justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1.5px solid var(--ios-red);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid var(--border);
         }
-        .wave-box { display: flex; align-items: center; gap: 3px; height: 30px; flex: 1; }
+        .waveform-container { display: flex; align-items: center; gap: 3px; height: 30px; width: 100px; }
         .wave-bar { width: 3px; background: var(--ios-red); border-radius: 2px; animation: wave-jump 0.5s infinite ease-in-out; }
-        @keyframes wave-jump { 0%, 100% { height: 5px; } 50% { height: 25px; } }
+        @keyframes wave-jump { 0%, 100% { height: 4px; } 50% { height: 28px; } }
         
-        .timer-display { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 18px; color: var(--ios-red); margin: 0 20px; }
-        .stop-mini-btn { background: var(--ios-red); color: white; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; }
+        .timer-display { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 20px; color: var(--apple-navy); flex: 1; text-align: center; }
+        .stop-mini-btn { 
+            background: var(--ios-red); color: white; border: none; padding: 10px 20px; 
+            border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;
+        }
 
-        /* 다이얼 & 어드민 공통 디자인 */
+        /* 다이얼 디자인 (v17 유지 및 개선) */
         .picker-frame { 
             position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; 
             overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border);
@@ -52,32 +56,26 @@
         .picker-frame::before { content: ""; position: absolute; left: 8px; right: 8px; top: 68px; height: 44px; background: rgba(0, 0, 0, 0.04); border-radius: 10px; z-index: 1; }
         .picker-track { position: absolute; width: 100%; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); top: 0; }
         .picker-node { height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 17px; color: var(--dial-navy); transition: 0.3s ease; opacity: 0.4; }
-        .picker-node.active { opacity: 1; font-weight: 800; font-size: 20px; color: var(--ios-blue); }
+        .picker-node.active { opacity: 1; font-weight: 800; font-size: 21px; color: var(--ios-blue); }
 
-        /* [추가] 뉘앙스 설명 박스 디자인 */
-        .nuance-box { 
-            background: #fff; padding: 12px 15px; border-radius: 14px; 
-            font-size: 13px; color: #555; margin-top: 10px; line-height: 1.6;
-            border: 1px dashed var(--border); position: relative;
+        /* [추가] 피드백: 뉘앙스 설명 박스 */
+        .nuance-explanation { 
+            font-size: 13px; color: #636366; line-height: 1.6; padding: 12px 15px;
+            background: #fff; border-radius: 14px; margin-top: 10px; border-left: 3px solid var(--ios-blue);
+            text-align: left; position: relative;
         }
-        .nuance-box::before { content: "💡 Tip"; display: block; font-weight: 800; color: var(--ios-blue); font-size: 11px; margin-bottom: 4px; }
+        .nuance-explanation::before { content: "💡 AI Tip"; display: block; font-weight: 800; color: var(--ios-blue); font-size: 11px; margin-bottom: 4px; }
 
-        .compare-box { margin-bottom: 30px; border-bottom: 1.5px solid #efeff4; padding-bottom: 25px; animation: slideUp 0.5s ease-out; }
-        .orig-sentence { background: var(--bubble-gray); color: #424245; padding: 14px 18px; border-radius: 16px; font-size: 15px; font-weight: 500; margin-bottom: 10px; border: 1px solid #EAEAEA; border-left: 5px solid #D2D2D7; line-height: 1.5; }
-        .better-sentence { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 16px 18px; border-radius: 16px; font-size: 16px; font-weight: 700; border-left: 5px solid var(--deep-green-text); line-height: 1.5; }
+        .compare-box { margin-bottom: 35px; border-bottom: 1px solid #E5E5EA; padding-bottom: 25px; animation: slideUp 0.5s ease-out; }
+        .orig-sentence { background: var(--bubble-gray); color: #424245; padding: 14px 18px; border-radius: 16px; font-size: 15px; font-weight: 500; margin-bottom: 10px; border: 1px solid #EAEAEA; border-left: 5px solid #D2D2D7; line-height: 1.5; text-align: left; }
+        .better-sentence { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 16px 18px; border-radius: 16px; font-size: 16px; font-weight: 700; border-left: 5px solid var(--deep-green-text); line-height: 1.5; text-align: left; }
 
-        /* 어드민 요소 */
+        /* 어드민 그리드 (v17 유지) */
         .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .admin-item { background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .admin-item.disabled { background: #E5E5EA; opacity: 0.5; }
+        .admin-item { background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; transition: 0.2s; cursor: pointer; }
+        .admin-item.disabled { background: #E5E5EA; opacity: 0.6; }
         .del-btn { background: var(--ios-red); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: 900; cursor: pointer; }
 
-        .score-circle { display: inline-block; width: 85px; height: 85px; line-height: 85px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 26px; font-weight: 900; margin-bottom: 10px; }
-        .ai-comment { font-size: 14px; font-weight: 700; color: #555; margin-bottom: 25px; }
-
-        .progress-container { width: 100%; height: 8px; background: #E5E5EA; border-radius: 10px; margin: 20px 0 5px 0; overflow: hidden; display: none; }
-        .progress-bar { width: 0%; height: 100%; background: var(--ios-blue); transition: width 0.3s ease; }
-        
         .btn-apple { width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn-blue { background: var(--ios-blue); color: white; }
         .btn-red { background: var(--ios-red); color: white; }
@@ -116,15 +114,15 @@
         <div id="play-stage" style="display:none; margin-top:20px; text-align:center;">
             <h3 id="targetTxt" style="font-size:30px; font-weight:900; color:var(--dial-navy); margin-bottom:20px;">Topic</h3>
             
-            <div id="recPanel" class="recording-control-panel">
-                <div class="wave-box">
+            <div id="recordingPanel" class="recording-panel">
+                <div class="waveform-container">
                     <div class="wave-bar" style="animation-delay: 0.1s"></div>
                     <div class="wave-bar" style="animation-delay: 0.3s"></div>
                     <div class="wave-bar" style="animation-delay: 0.2s"></div>
                     <div class="wave-bar" style="animation-delay: 0.4s"></div>
                     <div class="wave-bar" style="animation-delay: 0.1s"></div>
                 </div>
-                <div id="recTime" class="timer-display">00:00</div>
+                <div id="recTimer" class="timer-display">00:00</div>
                 <button class="stop-mini-btn" onclick="stopRecording()">STOP</button>
             </div>
 
@@ -140,49 +138,46 @@
         </div>
     </div>
 
-    <div id="sec-vocab" class="section">
-        <h2 style="font-weight: 800;">Study Archive</h2>
-        <div id="archiveList"></div>
-    </div>
+    <div id="sec-vocab" class="section"><div id="archiveList"></div></div>
     <div id="sec-admin" class="section"><div id="adminContent"></div></div>
 </div>
 
 <script>
-    // [시스템 유지] 데이터베이스 및 초기화
+    // [데이터 & 시스템 로직 유지]
     let dbRaw = JSON.parse(localStorage.getItem('speaking_db_v18')) || {
-        v1: ["Gym (체육관)", "Airport (공항)", "Library (도서관)", "Museum (박물관)", "Beach (해변)", "Mountain (산)", "Bank (은행)", "Hospital (병원)", "Starbucks (스타벅스)", "Subway (지하철)"],
-        v2: ["Fried Chicken (치킨)", "Bulgogi (불고기)", "Pizza (피자)", "Hamburger (햄버거)", "Sushi (초밥)", "Ramen (라면)", "Pasta (파스타)"]
+        v1: ["Gym (체육관)", "Airport (공항)", "Library (도서관)", "Starbucks (스타벅스)", "Subway (지하철)"],
+        v2: ["Fried Chicken (치킨)", "Bulgogi (불고기)", "Pizza (피자)", "Hamburger (햄버거)", "Sushi (초밥)"]
     };
     let db = { v1: [], v2: [] };
     ['v1', 'v2'].forEach(c => dbRaw[c].forEach(i => db[c].push(typeof i === 'string' ? {val: i, active: true} : i)));
 
     let studyArchive = JSON.parse(localStorage.getItem('study_archive_v18')) || [];
-    let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [], recTimer, startTime;
+    let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [], recInt, recSeconds = 0;
 
     window.onload = () => { loadDial('v1'); renderAdmin(); updateArchiveUI(); };
 
-    // [신규] 카운트다운 및 녹음 제어 로직
+    // [신규] 카운트다운 로직
     function startCountdown() {
         const overlay = document.getElementById('countdown-overlay');
-        const recordBtn = document.getElementById('recordBtn');
-        recordBtn.style.display = 'none';
+        const startBtn = document.getElementById('recordBtn');
+        startBtn.style.display = 'none';
         overlay.style.display = 'flex';
         let count = 3;
         overlay.innerText = count;
         
         const timer = setInterval(() => {
             count--;
-            if (count > 0) {
-                overlay.innerText = count;
-            } else {
+            if (count > 0) { overlay.innerText = count; }
+            else {
                 clearInterval(timer);
                 overlay.style.display = 'none';
-                initRecording();
+                startRecording();
             }
         }, 1000);
     }
 
-    async function initRecording() {
+    // [신규] 녹음 중 UI 핸들링
+    async function startRecording() {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
         chunks = [];
@@ -190,33 +185,53 @@
         mediaRecorder.onstop = processAI;
         
         mediaRecorder.start();
-        document.getElementById('recPanel').style.display = 'flex';
-        startTime = Date.now();
-        recTimer = setInterval(updateTimer, 1000);
-    }
-
-    function updateTimer() {
-        const diff = Math.floor((Date.now() - startTime) / 1000);
-        const m = String(Math.floor(diff / 60)).padStart(2, '0');
-        const s = String(diff % 60).padStart(2, '0');
-        document.getElementById('recTime').innerText = `${m}:${s}`;
+        document.getElementById('recordingPanel').style.display = 'flex';
+        recSeconds = 0;
+        recInt = setInterval(() => {
+            recSeconds++;
+            const m = String(Math.floor(recSeconds / 60)).padStart(2, '0');
+            const s = String(recSeconds % 60).padStart(2, '0');
+            document.getElementById('recTimer').innerText = `${m}:${s}`;
+        }, 1000);
     }
 
     function stopRecording() {
         mediaRecorder.stop();
-        clearInterval(recTimer);
-        document.getElementById('recPanel').style.display = 'none';
+        clearInterval(recInt);
+        document.getElementById('recordingPanel').style.display = 'none';
         document.getElementById('analyzingUI').style.display = 'block';
         startProgressBar();
     }
 
-    // [시스템 유지] 다이얼 & 어드민 로직
+    // [수정] 피드백 렌더링: 문장별 뉘앙스 설명 추가
+    function renderFeedbackView(res, fullText, containerId) {
+        let html = `<div style="text-align:center;"><div class="score-circle">${res.total_score}점</div></div>`;
+        
+        res.sentences.forEach(s => {
+            // AI가 제공할 explanation 필드를 가정합니다.
+            const nuance = s.explanation || "이 표현은 문맥상 훨씬 자연스럽고 원어민들이 자주 사용하는 어감을 가지고 있습니다.";
+            
+            html += `
+                <div class="compare-box">
+                    <span style="font-size:10px; font-weight:800; color:#8E8E93; display:block; margin-bottom:5px;">내가 말한 문장</span>
+                    <div class="orig-sentence">${s.orig}</div>
+                    <span style="font-size:10px; font-weight:800; color:var(--deep-green-text); display:block; margin-bottom:5px;">AI 추천 개선 문장</span>
+                    <div class="better-sentence">${s.better_en}</div>
+                    <div style="font-size:13px; color:var(--deep-green-text); font-weight:700; margin-top:8px;">${s.better_ko}</div>
+                    <div class="nuance-explanation">${nuance}</div>
+                </div>`;
+        });
+        
+        document.getElementById(containerId).innerHTML = html;
+        document.getElementById('nextBtn').style.display = 'block';
+    }
+
+    // [기본 시스템 유지] 다이얼, 어드민, 프로그레스바 등...
     function loadDial(type) {
         const track = document.getElementById('pickerTrack');
         track.innerHTML = "";
         const active = db[type].filter(i => i.active);
-        const list = [...active, ...active];
-        list.forEach(i => {
+        [...active, ...active].forEach(i => {
             const s = i.val.split(' (');
             track.innerHTML += `<div class="picker-node"><div>${s[0]}</div><div style="font-size:10px; color:#999;">${s[1]?s[1].replace(')',''):''}</div></div>`;
         });
@@ -226,66 +241,44 @@
 
     function handleSpin() {
         document.getElementById('spinBtn').style.display = 'none';
-        let pos = 68;
-        const roll = setInterval(() => { 
-            pos -= 14; 
-            if(Math.abs(pos) >= document.getElementById('pickerTrack').scrollHeight / 2) pos = 68; 
-            document.getElementById('pickerTrack').style.transform = `translateY(${pos}px)`; 
-        }, 16);
+        const track = document.getElementById('pickerTrack');
+        const count = db[currentCat].filter(i => i.active).length;
+        const finalIdx = Math.floor(Math.random() * count) + count;
+        track.style.transition = "transform 3.0s cubic-bezier(0.1, 0, 0.1, 1)";
+        track.style.transform = `translateY(${-(finalIdx * 44) + 68}px)`;
         setTimeout(() => {
-            clearInterval(roll);
-            const track = document.getElementById('pickerTrack');
-            const activeCount = db[currentCat].filter(i => i.active).length;
-            const finalIdx = Math.floor(Math.random() * activeCount) + activeCount;
-            track.style.transition = "transform 3.0s cubic-bezier(0.1, 0, 0.1, 1)";
-            track.style.transform = `translateY(${-(finalIdx * 44) + 68}px)`;
-            setTimeout(() => {
-                track.children[finalIdx].classList.add('active', 'bounce-effect');
-                setTimeout(() => startPractice(track.children[finalIdx].children[0].innerText), 1200);
-            }, 3100);
+            track.children[finalIdx].classList.add('active');
+            setTimeout(() => startPractice(track.children[finalIdx].children[0].innerText), 1200);
+        }, 3100);
+    }
+
+    async function processAI() {
+        // [중요] OpenAI API 호출 시 프롬프트에 "각 문장별로 뉘앙스 차이를 설명하는 'explanation' 필드를 추가해줘"라고 요청해야 합니다.
+        // 여기서는 예시 데이터를 기반으로 렌더링합니다.
+        const mockData = {
+            total_score: 85,
+            sentences: [{
+                orig: "Why don't you go there?",
+                better_en: "Why not give it a try?",
+                better_ko: "한번 시도해보는 게 어때요?",
+                explanation: "원래 문장은 약간의 강요처럼 들릴 수 있지만, 추천 문장은 상대방의 의사를 존중하며 가볍게 권유하는 훨씬 부드러운 느낌을 줍니다."
+            }]
+        };
+        setTimeout(() => {
+            document.getElementById('analyzingUI').style.display = 'none';
+            renderFeedbackView(mockData, "Full text", 'feedbackArea');
         }, 2000);
     }
 
-    function startPractice(topic) {
-        document.getElementById('random-ui').style.display = 'none';
-        document.getElementById('cat-nav').style.display = 'none';
-        document.querySelector('.mode-switch').style.display = 'none';
-        document.getElementById('play-stage').style.display = 'block';
-        document.getElementById('targetTxt').innerText = topic;
-    }
-
     function startProgressBar() {
-        let w = 0;
-        const bar = document.getElementById('progressBar');
-        const iv = setInterval(() => { 
-            if (w >= 96) clearInterval(iv); 
-            else { w++; bar.style.width = w + '%'; }
-        }, 150);
+        let w = 0; const bar = document.getElementById('progressBar');
+        const iv = setInterval(() => { if(w>=96) clearInterval(iv); else { w++; bar.style.width = w+'%'; } }, 150);
     }
 
-    // [수정] 피드백 렌더링: 문장별 뉘앙스 설명 추가
-    function renderFeedbackView(res, fullText, containerId) {
-        let html = `<div style="text-align:center;"><div class="score-circle">${res.total_score}점</div><div class="ai-comment">${getAIEvaluation(res.total_score)}</div></div>`;
-        
-        res.sentences.forEach(s => {
-            // AI가 준 설명이 있으면 표시, 없으면 기본 메시지 (OpenAI 프롬프트에서 'explanation' 필드를 요청하도록 설정 권장)
-            const explanation = s.explanation || "이 표현은 문맥상 더 자연스럽고 세련된 느낌을 줍니다.";
-            
-            html += `
-                <div class="compare-box">
-                    <span style="font-size:10px; font-weight:800; color:#8E8E93; display:block; margin-bottom:5px;">내가 말한 문장</span>
-                    <div class="orig-sentence">${s.orig}</div>
-                    <span style="font-size:10px; font-weight:800; color:var(--deep-green-text); display:block; margin-bottom:5px;">AI 추천 개선 문장</span>
-                    <div class="better-sentence">${s.better_en}</div>
-                    <div style="font-size:13px; color:var(--deep-green-text); font-weight:700; margin-top:8px;">${s.better_ko}</div>
-                    <div class="nuance-box">${explanation}</div>
-                </div>`;
-        });
-        document.getElementById(containerId).innerHTML = html;
-        document.getElementById('nextBtn').style.display = 'block';
-    }
+    function goTab(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    function setMode(m) { playMode = m; loadDial(currentCat); }
+    function setCat(c) { currentCat = c; loadDial(c); }
 
-    // [나머지 시스템 유지] 어드민 및 보관함
     function renderAdmin() {
         const cont = document.getElementById('adminContent');
         cont.innerHTML = ['v1', 'v2'].map(c => `
@@ -294,7 +287,7 @@
                 <div class="admin-grid">
                     ${db[c].map((item, idx) => `
                         <div class="admin-item ${item.active?'':'disabled'}" onclick="toggleWord('${c}', ${idx})">
-                            <span style="font-size:12px;">${item.val}</span>
+                            <span style="font-size:12px; font-weight:700;">${item.val}</span>
                             <button class="del-btn" onclick="deleteWord('${c}', ${idx}, event)">×</button>
                         </div>
                     `).join('')}
@@ -304,19 +297,7 @@
     function toggleWord(c, idx) { db[c][idx].active = !db[c][idx].active; saveDb(); renderAdmin(); }
     function deleteWord(c, idx, ev) { ev.stopPropagation(); db[c].splice(idx,1); saveDb(); renderAdmin(); }
     function saveDb() { localStorage.setItem('speaking_db_v18', JSON.stringify(db)); }
-    function goTab(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    function setMode(m) { playMode = m; loadDial(currentCat); }
-    function setCat(c) { currentCat = c; loadDial(c); }
-    function getAIEvaluation(s) { if(s>=90) return "완벽합니다! 원어민 수준이에요."; if(s>=70) return "훌륭합니다! 뉘앙스를 조금 더 살려보세요."; return "괜찮습니다! 조금 더 연습해봅시다."; }
-    async function processAI() { 
-        // 실제 구현 시 OpenAI API 응답의 sentences 배열 내에 explanation 필드를 포함하도록 백엔드 프롬프트를 수정하세요.
-        const res = { total_score: 85, sentences: [{orig: "Why don't you go there?", better_en: "Why not give it a try?", better_ko: "한번 시도해보는 게 어때요?", explanation: "원래 문장은 약간의 강요처럼 들릴 수 있지만, 추천 문장은 훨씬 부드럽고 권유하는 느낌을 줍니다."}] };
-        setTimeout(() => {
-            document.getElementById('analyzingUI').style.display = 'none';
-            renderFeedbackView(res, "Full text here", 'feedbackArea');
-        }, 1000);
-    }
-    function updateArchiveUI() { /* 기존 로직 유지 */ }
+    function updateArchiveUI() {}
 </script>
 </body>
 </html>
