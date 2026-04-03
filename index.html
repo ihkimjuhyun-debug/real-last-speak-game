@@ -30,23 +30,25 @@
         .picker-frame { 
             position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; 
             overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border);
+            /* 그라데이션 마스크로 위아래 투명도 처리 */
             mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
         }
-        /* 당첨 가로선 */
+        /* 당첨 가로선 (iOS 타이머 스타일) */
         .picker-frame::before, .picker-frame::after {
             content: ""; position: absolute; left: 10%; right: 10%; height: 1.5px;
             background: var(--ios-blue); opacity: 0.6; z-index: 10;
         }
-        .picker-frame::before { top: 68px; }
-        .picker-frame::after { top: 112px; }
+        .picker-frame::before { top: 68px; } /* 가운데 영역 위쪽 선 */
+        .picker-frame::after { top: 112px; } /* 가운데 영역 아래쪽 선 */
 
         .picker-track { position: absolute; width: 100%; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
         .picker-node { 
             height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            font-size: 17px; color: var(--dial-navy); transition: 0.4s;
+            font-size: 17px; color: var(--dial-navy); transition: 0.4s ease;
             filter: blur(1.5px); opacity: 0.15; /* 기본 블러 처리 */
         }
+        /* [수정] 선택된 가운데 노드 스타일: 선명하게+색상변경 */
         .picker-node.active { 
             opacity: 1; font-weight: 800; font-size: 21px; filter: blur(0); 
             color: var(--ios-blue);
@@ -66,9 +68,10 @@
         /* 점수 & 분석 UI */
         .score-circle { display: inline-block; width: 85px; height: 85px; line-height: 85px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 26px; font-weight: 900; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         
-        /* [수정] 피드백 카드: 흰색 배경 + 회색 테두리 */
+        /* [수정] 피드백 카드 디자인 변경: 흰색 배경 + 가장자리 회색 테두리 */
         .orig-sentence { 
-            background: #fff; color: #424245; padding: 14px 18px; 
+            background: #fff; /* 배경 흰색으로 변경 */
+            color: #424245; padding: 14px 18px; 
             border-radius: 16px; font-size: 15px; font-weight: 500; margin-bottom: 10px; 
             border: 1px solid #E5E5E5; /* 가장자리 회색 유지 */
             border-left: 5px solid #D2D2D7; /* 포인트 선 유지 */
@@ -224,6 +227,12 @@
     function handleSpin() {
         document.getElementById('spinBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
+        
+        // 블러 및 오파시티 초기화 (스핀 시작 시)
+        document.querySelectorAll('.picker-node').forEach(n => {
+            n.classList.remove('active', 'bounce-effect');
+        });
+
         let pos = 0;
         rollInterval = setInterval(() => { 
             pos -= 14; 
@@ -235,16 +244,28 @@
     function stopSpin() {
         clearInterval(rollInterval);
         const track = document.getElementById('pickerTrack');
-        const finalIdx = Math.floor(Math.random() * (track.children.length/2)) + Math.floor(track.children.length/2);
+        const totalNodes = track.children.length;
+        const halfNodes = totalNodes / 2;
         
-        track.style.transition = "transform 3s cubic-bezier(0.1, 0, 0.1, 1)";
-        track.style.transform = `translateY(${-(finalIdx * 44) + 68}px)`;
+        // 랜덤 인덱스 설정 (후반부 데이터에서 선택)
+        const finalIdx = Math.floor(Math.random() * halfNodes) + halfNodes;
+        
+        // 다이얼이 멈추는 최종 위치 (Y좌표)
+        // 44px는 노드 높이, 68px는 Selection Window의 상단 위치
+        const finalY = -(finalIdx * 44) + 68;
 
+        track.style.transition = "transform 3s cubic-bezier(0.1, 0, 0.1, 1)";
+        track.style.transform = `translateY(${finalY}px)`;
+
+        // 스핀 transition이 끝나는 시점에 바운스 애니메이션 및 활성화 클래스 적용
         setTimeout(() => {
             const selectedNode = track.children[finalIdx];
-            selectedNode.classList.add('active', 'bounce-effect'); // 바운스 및 활성화
+            // JS로 블러 해제 및 바운스 클래스 추가
+            selectedNode.classList.add('active', 'bounce-effect'); 
+            
+            // 바운스 애니메이션이 끝난 후 게임 화면으로 전환
             setTimeout(() => startPractice(selectedNode.children[0].innerText), 1500);
-        }, 3100);
+        }, 3100); // transition 시간(3s)보다 약간 길게 설정
     }
 
     function startPractice(topic) {
@@ -342,7 +363,7 @@
 
     function updateArchiveUI() {
         const list = document.getElementById('archiveList');
-        if(studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px;'>기록이 없습니다.</p>"; return; }
+        if(studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px;'>학습 기록이 없습니다.</p>"; return; }
         list.innerHTML = studyArchive.map(e => {
             const first = e.sentences[0] || { orig: "...", better_en: "..." };
             return `
