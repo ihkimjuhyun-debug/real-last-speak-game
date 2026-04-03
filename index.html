@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Master: Pro Elite v35</title>
+    <title>Speaking Master: Pro Elite v36</title>
     <style>
         :root { 
             --apple-navy: #1C1C1E; --ios-blue: #007AFF; --ios-red: #FF3B30; 
@@ -23,7 +23,7 @@
         .tab { flex: 1; padding: 16px 0; border: none; background: none; font-size: 13px; font-weight: 700; color: #8E8E93; cursor: pointer; transition: 0.3s; border-bottom: 2.5px solid transparent; }
         .tab.active { color: var(--ios-blue); border-bottom: 2.5px solid var(--ios-blue); }
 
-        /* [버그 수정] 섹션 전환 애니메이션 최적화 (일그러짐 방지) */
+        /* 섹션 전환 애니메이션 (v35 일그러짐 방지 로직) */
         .section { display: none; padding: 20px; min-height: 80vh; transform-origin: top; }
         .section.active { display: block; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -35,14 +35,14 @@
         .selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-height: 520px; overflow-y: auto; padding: 10px 4px; }
         .grid-item { background: #fff; padding: 22px 10px; border-radius: 20px; font-size: 14px; font-weight: 800; text-align: center; border: 1.5px solid #EAEAEA; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.04); color: var(--dial-navy); display: flex; align-items: center; justify-content: center; }
 
-        /* 다이얼 UI (v33/34 로직 유지) */
+        /* 다이얼 UI (v33 고정 로직) */
         .picker-frame { position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%); }
         .picker-frame::before { content: ""; position: absolute; left: 8px; right: 8px; top: 68px; height: 44px; background: rgba(0, 0, 0, 0.04); border-radius: 10px; z-index: 1; pointer-events: none; }
         .picker-track { position: absolute; width: 100%; top: 0; left: 0; transform: translateY(68px); will-change: transform; }
         .picker-node { height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 17px; color: var(--dial-navy); opacity: 0.4; }
-        .picker-node.active { opacity: 1; font-weight: 800; font-size: 21px; color: var(--ios-blue); }
+        .picker-node.active { opacity: 1; font-weight: 800; font-size: 21px; color: var(--ios-blue); z-index: 2; }
 
-        /* 피드백 UI (v32 여백 및 v34 팁 디자인 유지) */
+        /* 피드백 UI (v32 여백 + v34 팁 디자인) */
         .score-circle { display: inline-block; width: 100px; height: 100px; line-height: 100px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 36px; font-weight: 900; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         .score-comment { font-size: 16px; font-weight: 800; color: #444; margin: 30px 0 45px 0; white-space: pre-line; line-height: 1.5; }
         .compare-box { margin-bottom: 50px; border-bottom: 1.5px solid #E5E5EA; padding-bottom: 45px; }
@@ -51,18 +51,15 @@
         .better-sentence { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 18px 20px; border-radius: 20px; font-size: 16px; font-weight: 800; border-left: 6px solid var(--deep-green-text); line-height: 1.6; text-align: left; margin-bottom: 8px; }
         .ko-bubble { background: #F0F9F1; color: var(--deep-green-text); padding: 10px 16px; border-radius: 14px; font-size: 14px; font-weight: 700; display: inline-block; border: 1px solid #E0EEE1; margin-top: 2px; text-align: left; }
         .tip-card { background: #ffffff; padding: 22px 20px; border-radius: 22px; border: 1px solid #E5E5EA; margin-top: 30px; text-align: left; box-shadow: 0 5px 20px rgba(0,0,0,0.04); }
-        .tip-header { color: var(--ios-blue); font-size: 11px; font-weight: 900; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
 
-        /* [복구] 어드민 단어 추가 UI */
+        /* 어드민 폼 디자인 */
         .admin-add-form { background: #fff; padding: 15px; border-radius: 18px; margin-bottom: 15px; border: 1px solid var(--border); display: flex; gap: 8px; }
         .admin-input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; font-weight: 600; outline: none; }
         .admin-add-btn { background: var(--ios-blue); color: #fff; border: none; padding: 0 18px; border-radius: 10px; font-weight: 800; cursor: pointer; }
-
         .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .admin-item { background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .admin-item { background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .del-btn { background: var(--ios-red); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 14px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
 
-        /* Vocab Archive */
         .archive-card { background: #fff; padding: 22px; border-radius: 24px; margin-bottom: 15px; border: 1px solid var(--border); cursor: pointer; display: flex; flex-direction: column; gap: 10px; text-align: left; }
         .btn-clear-light { background: #E5E5EA; color: #8E8E93; border: none; padding: 12px; border-radius: 14px; font-size: 12px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 30px; }
 
@@ -145,34 +142,26 @@
         v2: ["Fried Chicken (치킨)", "Kimchi Stew (김치찌개)", "Bulgogi (불고기)", "Tteokbokki (떡볶이)", "Bibimbap (비빔밥)", "Pasta (파스타)", "Steak (스테이크)", "Sushi (초밥)", "Ramen (라면)", "Pizza (피자)", "Hamburger (햄버거)", "Taco (타코)", "Burrito (부리토)", "Dim Sum (딤섬)", "Peking Duck (북경오리)", "Pho (쌀국수)", "Pad Thai (팟타이)", "Bagel (베이글)", "Macaron (마카롱)", "Gelato (젤라토)", "Brownie (브라우니)", "Waffle (와플)", "Pancake (팬케이크)", "Acaibowl (아사이볼)", "Salad (샐러드)", "Sandwich (샌드위치)", "Tonkatsu (돈가스)", "Udon (우동)", "Tempura (튀김)", "Kebab (케밥)", "Gyros (기로스)", "Risotto (리조또)", "Lasagna (라자냐)", "Clam Chowder (클램 차우더)", "Galbi (갈비)", "Naengmyeon (냉면)", "Dakgalbi (닭갈비)", "Yukhoe (육회)", "Gimbap (김밥)", "Japchae (잡채)", "Donut (도넛)", "Hot Dog (핫도그)", "BBQ Ribs (바비큐 립)", "Buffalo Wings (버팔로 윙)", "Omelette (오멜렛)", "Truffle Pasta (트러플 파스타)", "Bingsu (빙수)", "Malatang (마라탕)", "Tanghulu (탕후루)", "Tiramisu (티라미수)", "Croissant (크로와상)", "Cheesecake (치즈케이크)", "Mojito (모히또)", "Sangria (샹그리아)", "Soju (소주)", "Croque Monsieur (크로크무슈)", "Fish and Chips (피쉬앤칩스)", "Paella (파에야)", "Poutine (푸틴)", "Hummus (후무스)", "Falafel (팔라펠)", "Gnocchi (뇨끼)", "Ratatouille (라따뚜이)", "Sashimi (사시미)", "Unagi (장어구이)", "Shabu Shabu (샤브샤브)", "Mapo Tofu (마포두부)", "Spring Roll (스프링롤)", "Naan (난)", "Curry (카레)", "Churros (츄러스)", "Fondue (퐁듀)", "Goulash (굴라쉬)", "Escargot (에스카르고)", "Tapas (타파스)", "Miso Soup (미소된장국)", "Dumplings (만두)", "Kimchi (김치)", "Kalguksu (칼국수)", "Bossam (보쌈)", "Jokbal (족발)", "Gamjatang (감자탕)", "Sundae (순대)", "Mandu (만두)", "Pajeon (파전)", "Yakgwa (약과)", "Sikhye (식혜)", "Sujeonggwa (수정과)", "Dalgona (달고나)", "Honey Bread (허니브레드)", "Egg Drop (에그드랍)", "Gyeran-mari (계란말이)", "Dubu-kimchi (두부김치)", "Golbaengi-muchim (골뱅이무침)", "Jeon (전)", "Mandu-guk (만둣국)", "Sujebi (수제비)", "Kimbap (김밥)", "Jajangmyeon (짜장면)", "Jjamppong (짬뽕)"]
     };
 
-    let rawDb = JSON.parse(localStorage.getItem('speaking_db_v35')) || DEFAULT_DB;
+    let rawDb = JSON.parse(localStorage.getItem('speaking_db_v36')) || DEFAULT_DB;
     let db = { v1: [], v2: [] };
     ['v1', 'v2'].forEach(c => rawDb[c].forEach(i => db[c].push(typeof i === 'string' ? {val: i, active: true} : i)));
 
-    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v35')) || [];
+    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v36')) || [];
     let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [], recInt, recSeconds = 0, rollInterval;
     let audioCtx, analyser, dataArray, animationId;
 
     window.onload = () => { loadDial('v1'); renderAdmin(); updateArchiveUI(); };
 
-    // [복구] 단어 추가 로직
-    function addWord(cat) {
-        const input = document.getElementById(`add-input-${cat}`);
-        const val = input.value.trim();
-        if(!val) return;
-        db[cat].unshift({ val: val, active: true });
-        input.value = "";
-        saveDb();
-        renderAdmin();
-    }
-
+    // [수정] 어드민 렌더링: 음식 섹션 예시 Ramen(라면)으로 변경
     function renderAdmin() {
         const cont = document.getElementById('adminContent');
-        cont.innerHTML = ['v1', 'v2'].map(c => `
+        cont.innerHTML = ['v1', 'v2'].map(c => {
+            const example = c === 'v1' ? 'Park (공원)' : 'Ramen (라면)';
+            return `
             <div style="background:#fff; padding:20px; border-radius:22px; border:1px solid var(--border); margin-bottom:15px;">
                 <div style="font-weight:900; margin-bottom:12px;">${c==='v1'?'Places':'Food'} (${db[c].length})</div>
                 <div class="admin-add-form">
-                    <input type="text" id="add-input-${c}" class="admin-input" placeholder="새 단어 추가 (예: Park (공원))">
+                    <input type="text" id="add-input-${c}" class="admin-input" placeholder="새 단어 추가 (예: ${example})">
                     <button class="admin-add-btn" onclick="addWord('${c}')">추가</button>
                 </div>
                 <div class="admin-grid">${db[c].map((item, idx) => `
@@ -181,10 +170,16 @@
                         <button class="del-btn" onclick="deleteWord('${c}', ${idx}, event)">×</button>
                     </div>`).join('')}
                 </div>
-            </div>`).join('');
+            </div>`;
+        }).join('');
     }
 
-    // [로직 유지] 다이얼, 피드백, 보관함
+    function addWord(cat) { const input = document.getElementById(`add-input-${cat}`); const val = input.value.trim(); if(!val) return; db[cat].unshift({ val: val, active: true }); input.value = ""; saveDb(); renderAdmin(); }
+    function saveDb() { localStorage.setItem('speaking_db_v36', JSON.stringify(db)); }
+    function toggleWord(c, idx) { db[c][idx].active = !db[c][idx].active; saveDb(); renderAdmin(); }
+    function deleteWord(c, idx, ev) { ev.stopPropagation(); if(confirm("Delete?")) { db[c].splice(idx, 1); saveDb(); renderAdmin(); } }
+
+    // [로직 유지] 다이얼 시스템
     function loadDial(type) {
         const track = document.getElementById('pickerTrack'); const active = db[type].filter(i => i.active); track.innerHTML = "";
         const combined = [...active, ...active, ...active];
@@ -206,6 +201,7 @@
         setTimeout(() => { track.querySelectorAll('.picker-node').forEach(n => n.classList.remove('active')); track.children[finalIdx].classList.add('active'); setTimeout(() => startPractice(track.children[finalIdx].children[0].innerText), 1200); }, 2600);
     }
 
+    // [로직 유지] 피드백 렌더링
     function renderFeedbackView(res, fullText, containerId) {
         let html = `<div class="score-container"><div class="score-circle">${res.total_score}</div><div class="score-comment">${getAIEvaluation(res.total_score)}</div></div>`;
         res.sentences.forEach(s => {
@@ -216,20 +212,22 @@
         if(containerId === 'feedbackArea') { document.getElementById('controlButtons').style.display = 'flex'; document.getElementById('exitBtn').style.display = 'none'; }
     }
 
+    // [로직 유지] 보관함 시스템
     function updateArchiveUI() {
         const list = document.getElementById('archiveList'); if(!studyArchive || studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px; color:#888;'>기록이 없습니다.</p>"; return; }
         list.innerHTML = studyArchive.map(e => { const worst = e.sentences.reduce((prev, cur) => (Math.abs(cur.better_en.length - cur.orig.length) > Math.abs(prev.better_en.length - prev.orig.length) ? cur : prev), e.sentences[0]); return `<div class="archive-card" onclick="openDetail(${e.id})"><div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:11px; font-weight:800; color:var(--ios-blue);">${e.ts}</span><span style="color:var(--ios-red); font-size:11px; font-weight:800;" onclick="deleteArchive(${e.id}, event)">삭제</span></div><div style="font-size:19px; font-weight:900;">${e.topic}</div><div style="display:flex; margin-bottom:5px;"><span class="arc-tag">⏱ ${e.duration}초</span><span class="arc-tag">🏆 ${e.score}점</span></div><div style="font-size:13px; color:#888;">${worst.orig}</div><div style="font-size:14px; font-weight:800; color:var(--deep-green-text);">${worst.better_en}</div></div>`; }).join('');
     }
-
     function openDetail(id) { const entry = studyArchive.find(x => x.id === id); if(!entry) return; renderFeedbackView({ total_score: entry.score, sentences: entry.sentences }, entry.full_text, 'detail-content'); document.getElementById('detail-title').innerText = `${entry.topic} (${entry.ts})`; document.getElementById('detail-view').style.display = 'block'; }
     function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
+
+    // [시스템 헬퍼]
     function goTab(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-'+id.split('-')[1])); if(id === 'sec-vocab') updateArchiveUI(); }
     function setMode(m) { playMode = m; document.getElementById('btn-m-rnd').classList.toggle('active', m==='random'); document.getElementById('btn-m-sel').classList.toggle('active', m==='select'); document.getElementById('random-ui').style.display = m==='random'?'block':'none'; document.getElementById('select-ui').style.display = m==='select'?'block':'none'; if(m==='random') loadDial(currentCat); else renderGrid(); }
     function setCat(c) { currentCat = c; document.getElementById('btn-c-v1').classList.toggle('active', c==='v1'); document.getElementById('btn-c-v2').classList.toggle('active', c==='v2'); if(playMode === 'random') loadDial(c); else renderGrid(); }
     function renderGrid() { document.getElementById('selectionGrid').innerHTML = db[currentCat].filter(i => i.active).map(t => `<div class="grid-item" onclick="startPractice('${t.val}')">${t.val}</div>`).join(''); }
     function startPractice(topic) { document.getElementById('random-ui').style.display='none'; document.getElementById('select-ui').style.display='none'; document.getElementById('cat-nav').style.display='none'; document.querySelector('.mode-switch').style.display='none'; document.getElementById('play-stage').style.display='block'; document.getElementById('targetTxt').innerText=topic; }
     function startCountdown() { const btn = document.getElementById('recordBtn'); let count = 3; btn.disabled = true; const timer = setInterval(() => { btn.innerText = `READY IN ${count}...`; count--; if(count < 0) { clearInterval(timer); btn.style.display = 'none'; document.getElementById('recordingPanel').style.display = 'flex'; startRecording(); } }, 1000); }
-    async function startRecording() { try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); audioCtx.createMediaStreamSource(stream).connect(analyser); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount); mediaRecorder = new MediaRecorder(stream); chunks = []; mediaRecorder.ondataavailable = e => chunks.push(e.data); mediaRecorder.onstop = processAI; mediaRecorder.start(); recSeconds = 0; recInt = setInterval(() => { recSeconds++; const m = String(Math.floor(recSeconds/60)).padStart(2,'0'), s = String(recSeconds%60).padStart(2,'0'); document.getElementById('recTimer').innerText = `${m}:${s}`; }, 1000); drawWave(); } catch(e) { alert("Mic Permission Denied."); location.reload(); } }
+    async function startRecording() { try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); audioCtx.createMediaStreamSource(stream).connect(analyser); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount); mediaRecorder = new MediaRecorder(stream); chunks = []; mediaRecorder.ondataavailable = e => chunks.push(e.data); mediaRecorder.onstop = processAI; mediaRecorder.start(); recSeconds = 0; recInt = setInterval(() => { recSeconds++; const m = String(Math.floor(recSeconds/60)).padStart(2,'0'), s = String(recSeconds%60).padStart(2,'0'); document.getElementById('recTimer').innerText = `${m}:${s}`; }, 1000); drawWave(); } catch(e) { alert("Mic Error."); location.reload(); } }
     function drawWave() { animationId = requestAnimationFrame(drawWave); analyser.getByteFrequencyData(dataArray); const bars = document.querySelectorAll('.wave-bar'); bars.forEach((bar, i) => { bar.style.height = Math.max(4, (dataArray[i % dataArray.length] / 128.0) * 45) + 'px'; }); }
     function stopRecording() { mediaRecorder.stop(); clearInterval(recInt); cancelAnimationFrame(animationId); if(audioCtx) audioCtx.close(); document.getElementById('recordingPanel').style.display = 'none'; document.getElementById('analyzingUI').style.display = 'block'; startProgressBar(); }
     function startProgressBar() { let w = 0; const bar = document.getElementById('progressBar'), per = document.getElementById('progressPercent'); const iv = setInterval(() => { if(w>=96) clearInterval(iv); else { w++; bar.style.width = w+'%'; per.innerText = w+'%'; } }, 150); }
@@ -244,12 +242,9 @@
             } catch (e) { alert("Analysis Failed."); location.reload(); }
         };
     }
-    function saveToArchive(data, topic, duration) { studyArchive.unshift({ id: Date.now(), ts: new Date().toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }), topic: topic, duration: duration, score: data.total_score, sentences: data.sentences, full_text: data.user_speech }); localStorage.setItem('study_archive_v35', JSON.stringify(studyArchive)); }
-    function toggleWord(c, idx) { db[c][idx].active = !db[c][idx].active; saveDb(); renderAdmin(); }
-    function deleteWord(c, idx, ev) { ev.stopPropagation(); if(confirm("Delete?")) { db[c].splice(idx, 1); saveDb(); renderAdmin(); } }
-    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v35', JSON.stringify(studyArchive)); updateArchiveUI(); } }
-    function clearArchive() { if(confirm("전체 삭제할까요?")) { studyArchive = []; localStorage.setItem('study_archive_v35', JSON.stringify(studyArchive)); updateArchiveUI(); } }
-    function saveDb() { localStorage.setItem('speaking_db_v35', JSON.stringify(db)); }
+    function saveToArchive(data, topic, duration) { studyArchive.unshift({ id: Date.now(), ts: new Date().toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }), topic: topic, duration: duration, score: data.total_score, sentences: data.sentences, full_text: data.user_speech }); localStorage.setItem('study_archive_v36', JSON.stringify(studyArchive)); }
+    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v36', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function clearArchive() { if(confirm("전체 삭제할까요?")) { studyArchive = []; localStorage.setItem('study_archive_v36', JSON.stringify(studyArchive)); updateArchiveUI(); } }
     function getAIEvaluation(s) { if(s>=90) return "완벽합니다!\n실제 원어민 수준이에요."; if(s>=75) return "훌륭합니다!\n뉘앙스를 조금 더 다듬어보세요."; return "좋습니다!\n계속 연습해봅시다."; }
 </script>
 </body>
