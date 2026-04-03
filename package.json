@@ -1,0 +1,16 @@
+{
+  "name": "speaking-master-pro",
+  "version": "1.0.0",
+  "description": "AI English Speaking Coach",
+  "main": "index.html",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.0",
+    "form-data": "^4.0.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
