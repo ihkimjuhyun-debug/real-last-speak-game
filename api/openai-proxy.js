@@ -16,7 +16,21 @@ export default async function handler(req, res) {
         const sttData = await sttResponse.json();
         const userSpeech = sttData.text;
 
-        const instruction = `Evaluate transcription: "${userSpeech}" for topic: "${topic}". Return JSON ONLY: {"total_score": 0-100, "sentences": [{"orig": "...", "better_en": "...", "better_ko": "...", "explanation": "..."}]}`;
+        // ✨ 핵심: explanation 부분에 '반드시 한국어로 작성'할 것을 강력하게 명시
+        const instruction = `
+        Evaluate the transcription: "${userSpeech}" for the topic: "${topic}".
+        You MUST return the result EXACTLY in the following JSON structure. 
+        {
+            "total_score": <number 0-100>,
+            "sentences": [
+                {
+                    "orig": "<original sentence>",
+                    "better_en": "<native-like improvement>",
+                    "better_ko": "<natural Korean translation>",
+                    "explanation": "<반드시 한국어로 작성. 문법 교정 이유와 뉘앙스를 한국어로 상세히 설명>"
+                }
+            ]
+        }`;
 
         const gptResponse = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${API_KEY}` },
