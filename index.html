@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Master: Pro Elite v36</title>
+    <title>Speaking Master: Pro Elite v36.1</title>
     <style>
         :root { 
             --apple-navy: #1C1C1E; --ios-blue: #007AFF; --ios-red: #FF3B30; 
@@ -23,7 +23,7 @@
         .tab { flex: 1; padding: 16px 0; border: none; background: none; font-size: 13px; font-weight: 700; color: #8E8E93; cursor: pointer; transition: 0.3s; border-bottom: 2.5px solid transparent; }
         .tab.active { color: var(--ios-blue); border-bottom: 2.5px solid var(--ios-blue); }
 
-        /* 섹션 전환 애니메이션 (v35 일그러짐 방지 로직) */
+        /* 섹션 전환 애니메이션 */
         .section { display: none; padding: 20px; min-height: 80vh; transform-origin: top; }
         .section.active { display: block; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -35,16 +35,18 @@
         .selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-height: 520px; overflow-y: auto; padding: 10px 4px; }
         .grid-item { background: #fff; padding: 22px 10px; border-radius: 20px; font-size: 14px; font-weight: 800; text-align: center; border: 1.5px solid #EAEAEA; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.04); color: var(--dial-navy); display: flex; align-items: center; justify-content: center; }
 
-        /* 다이얼 UI (v33 고정 로직) */
+        /* 다이얼 UI */
         .picker-frame { position: relative; height: 180px; background: #FFFFFF; border-radius: 24px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.1) 100%); }
         .picker-frame::before { content: ""; position: absolute; left: 8px; right: 8px; top: 68px; height: 44px; background: rgba(0, 0, 0, 0.04); border-radius: 10px; z-index: 1; pointer-events: none; }
         .picker-track { position: absolute; width: 100%; top: 0; left: 0; transform: translateY(68px); will-change: transform; }
         .picker-node { height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 17px; color: var(--dial-navy); opacity: 0.4; }
         .picker-node.active { opacity: 1; font-weight: 800; font-size: 21px; color: var(--ios-blue); z-index: 2; }
 
-        /* 피드백 UI (v32 여백 + v34 팁 디자인) */
+        /* 피드백 UI (중앙 정렬 보강) */
+        .score-container { text-align: center; padding: 10px 0; margin-bottom: 10px; }
         .score-circle { display: inline-block; width: 100px; height: 100px; line-height: 100px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 36px; font-weight: 900; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-        .score-comment { font-size: 16px; font-weight: 800; color: #444; margin: 30px 0 45px 0; white-space: pre-line; line-height: 1.5; }
+        .score-comment { font-size: 16px; font-weight: 800; color: #444; margin: 25px 0 45px 0; white-space: pre-line; line-height: 1.5; text-align: center; }
+        
         .compare-box { margin-bottom: 50px; border-bottom: 1.5px solid #E5E5EA; padding-bottom: 45px; }
         .label-text { font-size: 10px; font-weight: 800; color: #8E8E93; display: block; margin-bottom: 8px; letter-spacing: 1px; }
         .orig-sentence { background: var(--bubble-gray); color: #424245; padding: 18px 20px; border-radius: 20px; font-size: 15px; font-weight: 500; margin-bottom: 15px; border: 1px solid #EAEAEA; border-left: 6px solid #D1D1D6; line-height: 1.6; text-align: left; }
@@ -52,7 +54,7 @@
         .ko-bubble { background: #F0F9F1; color: var(--deep-green-text); padding: 10px 16px; border-radius: 14px; font-size: 14px; font-weight: 700; display: inline-block; border: 1px solid #E0EEE1; margin-top: 2px; text-align: left; }
         .tip-card { background: #ffffff; padding: 22px 20px; border-radius: 22px; border: 1px solid #E5E5EA; margin-top: 30px; text-align: left; box-shadow: 0 5px 20px rgba(0,0,0,0.04); }
 
-        /* 어드민 폼 디자인 */
+        /* 어드민 디자인 */
         .admin-add-form { background: #fff; padding: 15px; border-radius: 18px; margin-bottom: 15px; border: 1px solid var(--border); display: flex; gap: 8px; }
         .admin-input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; font-weight: 600; outline: none; }
         .admin-add-btn { background: var(--ios-blue); color: #fff; border: none; padding: 0 18px; border-radius: 10px; font-weight: 800; cursor: pointer; }
@@ -70,6 +72,8 @@
         .btn-apple { width: 100%; height: 60px; border-radius: 18px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
         .btn-blue { background: var(--ios-blue); color: white; }
         .btn-red { background: var(--ios-red); color: white; }
+        
+        .arc-tag { font-size: 10px; font-weight: 800; background: #eee; padding: 3px 8px; border-radius: 6px; margin-right: 5px; color: #666; }
     </style>
 </head>
 <body>
@@ -152,7 +156,6 @@
 
     window.onload = () => { loadDial('v1'); renderAdmin(); updateArchiveUI(); };
 
-    // [수정] 어드민 렌더링: 음식 섹션 예시 Ramen(라면)으로 변경
     function renderAdmin() {
         const cont = document.getElementById('adminContent');
         cont.innerHTML = ['v1', 'v2'].map(c => {
@@ -179,7 +182,6 @@
     function toggleWord(c, idx) { db[c][idx].active = !db[c][idx].active; saveDb(); renderAdmin(); }
     function deleteWord(c, idx, ev) { ev.stopPropagation(); if(confirm("Delete?")) { db[c].splice(idx, 1); saveDb(); renderAdmin(); } }
 
-    // [로직 유지] 다이얼 시스템
     function loadDial(type) {
         const track = document.getElementById('pickerTrack'); const active = db[type].filter(i => i.active); track.innerHTML = "";
         const combined = [...active, ...active, ...active];
@@ -201,7 +203,6 @@
         setTimeout(() => { track.querySelectorAll('.picker-node').forEach(n => n.classList.remove('active')); track.children[finalIdx].classList.add('active'); setTimeout(() => startPractice(track.children[finalIdx].children[0].innerText), 1200); }, 2600);
     }
 
-    // [로직 유지] 피드백 렌더링
     function renderFeedbackView(res, fullText, containerId) {
         let html = `<div class="score-container"><div class="score-circle">${res.total_score}</div><div class="score-comment">${getAIEvaluation(res.total_score)}</div></div>`;
         res.sentences.forEach(s => {
@@ -212,7 +213,6 @@
         if(containerId === 'feedbackArea') { document.getElementById('controlButtons').style.display = 'flex'; document.getElementById('exitBtn').style.display = 'none'; }
     }
 
-    // [로직 유지] 보관함 시스템
     function updateArchiveUI() {
         const list = document.getElementById('archiveList'); if(!studyArchive || studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px; color:#888;'>기록이 없습니다.</p>"; return; }
         list.innerHTML = studyArchive.map(e => { const worst = e.sentences.reduce((prev, cur) => (Math.abs(cur.better_en.length - cur.orig.length) > Math.abs(prev.better_en.length - prev.orig.length) ? cur : prev), e.sentences[0]); return `<div class="archive-card" onclick="openDetail(${e.id})"><div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:11px; font-weight:800; color:var(--ios-blue);">${e.ts}</span><span style="color:var(--ios-red); font-size:11px; font-weight:800;" onclick="deleteArchive(${e.id}, event)">삭제</span></div><div style="font-size:19px; font-weight:900;">${e.topic}</div><div style="display:flex; margin-bottom:5px;"><span class="arc-tag">⏱ ${e.duration}초</span><span class="arc-tag">🏆 ${e.score}점</span></div><div style="font-size:13px; color:#888;">${worst.orig}</div><div style="font-size:14px; font-weight:800; color:var(--deep-green-text);">${worst.better_en}</div></div>`; }).join('');
@@ -220,7 +220,6 @@
     function openDetail(id) { const entry = studyArchive.find(x => x.id === id); if(!entry) return; renderFeedbackView({ total_score: entry.score, sentences: entry.sentences }, entry.full_text, 'detail-content'); document.getElementById('detail-title').innerText = `${entry.topic} (${entry.ts})`; document.getElementById('detail-view').style.display = 'block'; }
     function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
 
-    // [시스템 헬퍼]
     function goTab(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-'+id.split('-')[1])); if(id === 'sec-vocab') updateArchiveUI(); }
     function setMode(m) { playMode = m; document.getElementById('btn-m-rnd').classList.toggle('active', m==='random'); document.getElementById('btn-m-sel').classList.toggle('active', m==='select'); document.getElementById('random-ui').style.display = m==='random'?'block':'none'; document.getElementById('select-ui').style.display = m==='select'?'block':'none'; if(m==='random') loadDial(currentCat); else renderGrid(); }
     function setCat(c) { currentCat = c; document.getElementById('btn-c-v1').classList.toggle('active', c==='v1'); document.getElementById('btn-c-v2').classList.toggle('active', c==='v2'); if(playMode === 'random') loadDial(c); else renderGrid(); }
