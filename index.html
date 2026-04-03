@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Master: Vercel Pro</title>
+    <title>Speaking Master: Vercel Archive Pro</title>
     <style>
         :root { 
             --apple-navy: #1D1D1F; 
@@ -14,6 +14,7 @@
             --soft-green-bg: #E8F5E9; 
             --deep-green-text: #2E7D32; 
             --border: #D2D2D7;
+            --stop-btn: #1C1C1E;
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background: var(--ios-bg); margin: 0; color: var(--apple-navy); -webkit-font-smoothing: antialiased; }
         .container { max-width: 500px; margin: 0 auto; min-height: 100vh; background: var(--ios-bg); position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.05); }
@@ -26,6 +27,11 @@
         .section { display: none; padding: 20px; animation: slideUp 0.4s ease-out; }
         .section.active { display: block; }
 
+        /* Mode & Category Controls */
+        .mode-switch { display: flex; gap: 8px; margin-bottom: 12px; }
+        .sub-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: #fff; font-size: 11px; font-weight: 800; color: #86868B; cursor: pointer; transition: 0.2s; }
+        .sub-btn.active { background: var(--ios-blue); color: #fff; border-color: var(--ios-blue); }
+
         /* Picker UI */
         .picker-frame { position: relative; height: 180px; background: #FFFFFF; border-radius: 20px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); }
         .picker-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 25%, rgba(255,255,255,0) 75%, #fff 100%); pointer-events: none; z-index: 5; }
@@ -33,14 +39,26 @@
         .picker-node { height: 44px; display: flex; align-items: center; justify-content: center; font-size: 17px; color: var(--dial-navy); opacity: 0.3; }
         .picker-node.active { opacity: 1; font-weight: 800; font-size: 20px; }
 
-        /* Buttons & Cards */
+        /* Selection Grid */
+        .selection-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-height: 380px; overflow-y: auto; padding-bottom: 20px; }
+        .grid-item { background: #fff; padding: 12px 6px; border-radius: 12px; font-size: 11px; font-weight: 700; text-align: center; border: 0.5px solid var(--border); cursor: pointer; color: var(--dial-navy); }
+
+        /* Feedback UI */
+        .score-circle { display: inline-block; width: 70px; height: 70px; line-height: 70px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 22px; font-weight: 900; margin-bottom: 15px; }
+        .sentence-card { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 15px; border: 0.5px solid var(--border); text-align: left; }
+        .orig-text { color: #8E8E93; font-size: 14px; margin-bottom: 6px; }
+        .better-highlight { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 17px; display: inline; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+        .tip-box { font-size: 12px; color: #555; background: #F2F2F7; padding: 12px; border-radius: 12px; margin-top: 10px; border-left: 3.5px solid var(--deep-green-text); line-height: 1.5; }
+
+        /* Archive Card */
+        .archive-card { background: #fff; padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 0.5px solid var(--border); cursor: pointer; transition: 0.2s; position: relative; }
+        .archive-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; background: var(--ios-blue); color: #fff; margin-bottom: 8px; }
+        .delete-btn { position: absolute; top: 15px; right: 15px; font-size: 10px; color: var(--ios-red); font-weight: 700; background: none; border: none; padding: 5px; cursor: pointer; }
+
+        /* Buttons */
         .btn-apple { width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn-blue { background: var(--ios-blue); color: white; }
         .btn-red { background: var(--ios-red); color: white; }
-        .score-circle { display: inline-block; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; background: var(--apple-navy); color: #fff; font-size: 24px; font-weight: 900; margin-bottom: 15px; }
-        .sentence-card { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 15px; border: 0.5px solid var(--border); text-align: left; }
-        .better-highlight { background: var(--soft-green-bg); color: var(--deep-green-text); padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 17px; display: inline; }
-        .tip-box { font-size: 12px; color: #555; background: #F2F2F7; padding: 12px; border-radius: 12px; margin-top: 10px; border-left: 3.5px solid var(--deep-green-text); }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -51,17 +69,34 @@
     <nav class="nav-bar">
         <button class="tab active" onclick="goTab('sec-play')">GAME</button>
         <button class="tab" onclick="goTab('sec-vocab')">VOCAB</button>
+        <button class="tab" onclick="goTab('sec-admin')">ADMIN</button>
     </nav>
 
     <div id="sec-play" class="section active">
-        <div class="picker-frame">
-            <div class="picker-overlay"></div>
-            <div id="pickerTrack" class="picker-track"></div>
+        <div class="mode-switch">
+            <button class="sub-btn active" id="btn-m-rnd" onclick="setMode('random')">랜덤 다이얼</button>
+            <button class="sub-btn" id="btn-m-sel" onclick="setMode('select')">직접 선택</button>
         </div>
-        <button id="spinBtn" class="btn-apple btn-blue" onclick="handleSpin()">Spin Dial</button>
-        
+        <div class="mode-switch" id="cat-nav">
+            <button class="sub-btn active" id="btn-c-v1" onclick="setCat('v1')">📍 Places</button>
+            <button class="sub-btn" id="btn-c-v2" onclick="setCat('v2')">🍱 Food</button>
+        </div>
+
+        <div id="random-ui">
+            <div class="picker-frame">
+                <div class="picker-overlay"></div>
+                <div id="pickerTrack" class="picker-track"></div>
+            </div>
+            <button id="spinBtn" class="btn-apple btn-blue" onclick="handleSpin()">Spin Dial</button>
+            <button id="stopBtn" class="btn-apple" style="background:#1c1c1e; color:white; display:none;" onclick="stopSpin()">STOP</button>
+        </div>
+
+        <div id="select-ui" style="display:none;">
+            <div id="selectionGrid" class="selection-grid"></div>
+        </div>
+
         <div id="play-stage" style="display:none; margin-top:20px; text-align:center;">
-            <h3 id="targetTxt" style="font-size:26px; font-weight:900;">Topic</h3>
+            <h3 id="targetTxt" style="font-size:26px; font-weight:900; color:var(--dial-navy);">Topic</h3>
             <button id="recordBtn" class="btn-apple btn-red">Start Recording</button>
             <div id="feedbackArea" style="margin-top:20px;"></div>
             <button id="nextBtn" class="btn-apple" style="background:#333; color:white; display:none;" onclick="location.reload()">Next Game</button>
@@ -71,112 +106,176 @@
     <div id="sec-vocab" class="section">
         <h2 style="font-weight: 800;">Study Archive</h2>
         <div id="archiveList"></div>
+        <button class="btn-apple" style="background:#8E8E93; color:white; font-size:12px; margin-top:30px;" onclick="clearArchive()">모든 기록 초기화</button>
+    </div>
+
+    <div id="sec-admin" class="section">
+        <h2 style="font-weight: 800;">Management</h2>
+        <div id="adminContent"></div>
     </div>
 </div>
 
+<div id="detail-view">
+    <div class="detail-header">
+        <button onclick="closeDetail()" style="border:none; background:none; color:var(--ios-blue); font-weight:700; font-size:16px;">&lt; Back</button>
+        <span id="detail-title-ts" style="font-size:13px; font-weight:800;">Detail Review</span>
+        <div style="width:50px;"></div>
+    </div>
+    <div id="detail-content" style="padding:20px;"></div>
+</div>
+
 <script>
-    let db = {
-        v1: ["Gym", "Central Park", "Starbucks", "Library", "Pharmacy", "Airport", "Luxury Hotel", "Museum", "Zoo", "Beach", "Mountain", "Post Office"],
-        v2: ["Fried Chicken", "Kimchi Stew", "Bulgogi", "Tteokbokki", "Bibimbap", "Samgyeopsal", "Pasta", "Steak", "Sushi", "Ramen"]
+    // [Vercel 보안] API 키를 지우고 서버 경로를 호출합니다.
+    let db = JSON.parse(localStorage.getItem('ultimate_db_v8')) || {
+        v1: ["Gym", "Central Park", "Han River Park", "Namsan Tower", "Starbucks", "Subway", "Library", "Pharmacy", "Airport", "Luxury Hotel", "Museum", "Zoo", "Beach", "Mountain", "Post Office", "Stadium", "University", "Hospital", "School", "Department Store", "Laundry", "Amusement Park", "Art Gallery", "Concert Hall", "Police Station", "Fire Station", "City Hall", "Bank", "Harbor", "Island", "Bridge", "Castle", "Temple", "Church", "Parking Lot", "Gas Station", "Flower Shop"],
+        v2: ["Fried Chicken", "Kimchi Stew", "Bulgogi", "Tteokbokki", "Bibimbap", "Samgyeopsal", "Pasta", "Steak", "Sushi", "Ramen", "Taco", "Burrito", "Dim Sum", "Peking Duck", "Pho", "Pad Thai", "Hamburger", "Pizza", "Bagel", "Macaron", "Gelato", "Brownie", "Waffle", "Pancake", "Acaibowl", "Salad", "Sandwich", "Tonkatsu", "Udon", "Tempura", "Kebab", "Gyros", "Risotto", "Lasagna", "Clam Chowder", "Margherita Pizza", "Samgyetang", "Sundubu Stew", "Galbi", "Naengmyeon", "Dakgalbi", "Yukhoe", "Gimbap", "Japchae", "Donut", "Hot Dog", "BBQ Ribs", "Buffalo Wings", "Egg Benedict", "French Toast", "Omelette", "Caesar Salad", "Truffle Pasta", "Bingsu", "Hotteok", "Jjimdak", "Budae Jjigae", "Yukgaejang", "Malatang", "Tanghulu", "Tiramisu", "Croissant", "Cheesecake", "Mojito", "Sangria", "Soju"]
     };
 
-    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v10')) || [];
-    let mediaRecorder, chunks = [];
+    let studyArchive = JSON.parse(localStorage.getItem('study_archive_v8')) || [];
+    let currentCat = 'v1', playMode = 'random', mediaRecorder, chunks = [];
 
-    window.onload = () => {
-        const track = document.getElementById('pickerTrack');
-        db.v1.forEach(item => track.innerHTML += `<div class="picker-node">${item}</div>`);
-    };
+    window.onload = () => { loadDial('v1'); renderAdmin(); updateArchiveUI(); };
 
     function goTab(id) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(id === 'sec-vocab') renderArchive();
+        if(id === 'sec-vocab') updateArchiveUI();
+    }
+
+    function setMode(m) {
+        playMode = m;
+        document.getElementById('btn-m-rnd').classList.toggle('active', m === 'random');
+        document.getElementById('btn-m-sel').classList.toggle('active', m === 'select');
+        document.getElementById('random-ui').style.display = m === 'random' ? 'block' : 'none';
+        document.getElementById('select-ui').style.display = m === 'select' ? 'block' : 'none';
+        if(m === 'random') loadDial(currentCat); else renderGrid();
+    }
+
+    function setCat(c) {
+        currentCat = c;
+        document.getElementById('btn-c-v1').classList.toggle('active', c === 'v1');
+        document.getElementById('btn-c-v2').classList.toggle('active', c === 'v2');
+        if(playMode === 'random') loadDial(c); else renderGrid();
+    }
+
+    function loadDial(type) {
+        const track = document.getElementById('pickerTrack');
+        track.innerHTML = "";
+        const data = [...db[type], ...db[type]];
+        data.forEach(item => track.innerHTML += `<div class="picker-node">${item}</div>`);
+        track.style.transform = `translateY(0px)`;
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('selectionGrid');
+        grid.innerHTML = db[currentCat].map(t => `<div class="grid-item" onclick="startPractice('${t}')">${t}</div>`).join('');
     }
 
     function handleSpin() {
+        document.getElementById('spinBtn').style.display = 'none';
+        document.getElementById('stopBtn').style.display = 'block';
+        let pos = 0;
+        rollInterval = setInterval(() => { pos -= 14; if(Math.abs(pos) >= document.getElementById('pickerTrack').scrollHeight / 2) pos = 0; document.getElementById('pickerTrack').style.transform = `translateY(${pos}px)`; }, 16);
+    }
+
+    function stopSpin() {
+        clearInterval(rollInterval);
         const track = document.getElementById('pickerTrack');
-        const spinBtn = document.getElementById('spinBtn');
-        spinBtn.disabled = true;
-        
-        let finalIdx = Math.floor(Math.random() * db.v1.length);
+        const finalIdx = Math.floor(Math.random() * (track.children.length/2)) + Math.floor(track.children.length/2);
         track.style.transition = "transform 3s cubic-bezier(0.1, 0, 0.1, 1)";
         track.style.transform = `translateY(${-(finalIdx * 44) + 66}px)`;
+        setTimeout(() => startPractice(track.children[finalIdx].innerText), 3500);
+    }
 
-        setTimeout(() => {
-            document.getElementById('play-stage').style.display = 'block';
-            document.getElementById('targetTxt').innerText = db.v1[finalIdx];
-            spinBtn.style.display = 'none';
-        }, 3200);
+    function startPractice(topic) {
+        document.getElementById('random-ui').style.display = 'none';
+        document.getElementById('select-ui').style.display = 'none';
+        document.getElementById('cat-nav').style.display = 'none';
+        document.querySelector('.mode-switch').style.display = 'none';
+        document.getElementById('play-stage').style.display = 'block';
+        document.getElementById('targetTxt').innerText = topic;
     }
 
     document.getElementById('recordBtn').onclick = async function() {
         if(this.innerText.includes("Start")) {
             const s = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(s);
-            chunks = [];
+            mediaRecorder = new MediaRecorder(s); chunks = [];
             mediaRecorder.ondataavailable = e => chunks.push(e.data);
-            mediaRecorder.onstop = () => getDeepFeedback();
+            mediaRecorder.onstop = () => analyzeAudio();
             mediaRecorder.start();
             this.innerText = "Stop & Analyzing...";
-            this.classList.replace('btn-red', 'btn-blue');
-        } else {
-            mediaRecorder.stop();
-            this.disabled = true;
-        }
+        } else { mediaRecorder.stop(); this.disabled = true; }
     };
 
-    async function getDeepFeedback() {
+    async function analyzeAudio() {
         const feedbackArea = document.getElementById('feedbackArea');
-        feedbackArea.innerHTML = "<p>AI가 Vercel 보안 서버에서 분석 중입니다...</p>";
+        feedbackArea.innerHTML = "<p>Vercel 보안 서버에서 AI 분석 중...</p>";
         
-        const userSpeech = "I visited the " + document.getElementById('targetTxt').innerText + " yesterday."; 
-        const prompt = `Analyze user speech about topic "${document.getElementById('targetTxt').innerText}". Score 0-100. JSON format only: {"total_score": 85, "sentences": [{"orig": "User speech", "better_en": "Improved version", "better_ko": "한국어 번역", "tip_en": "Grammar tip", "tip_ko": "팁 번역"}]}`;
+        const blob = new Blob(chunks, { type: 'audio/m4a' });
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = async () => {
+            const base64Audio = reader.result.split(',')[1];
+            const topic = document.getElementById('targetTxt').innerText;
 
-        try {
-            // [Vercel 전용 경로 호출]
-            const response = await fetch("/api/openai-proxy", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: prompt + "\nSpeech: " + userSpeech })
-            });
+            try {
+                const response = await fetch("/api/openai-proxy", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ audio: base64Audio, topic: topic })
+                });
 
-            const res = await response.json();
-            renderFeedbackView(res, userSpeech);
-            
-            // 기록 저장
-            studyArchive.unshift({ id: Date.now(), topic: document.getElementById('targetTxt').innerText, score: res.total_score, res, userSpeech });
-            localStorage.setItem('study_archive_v10', JSON.stringify(studyArchive));
-            
-            document.getElementById('nextBtn').style.display = 'block';
-            document.getElementById('recordBtn').style.display = 'none';
-        } catch (e) {
-            feedbackArea.innerHTML = "<p style='color:red;'>분석 실패. Vercel 환경 변수를 확인하세요.</p>";
-        }
+                const data = await response.json();
+                renderFeedbackView(data, data.user_speech, 'feedbackArea');
+                
+                // 보관함 저장
+                const now = new Date();
+                studyArchive.unshift({ id: Date.now(), ts: `${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`, topic: topic, score: data.total_score, sentences: data.sentences, full_text: data.user_speech });
+                localStorage.setItem('study_archive_v8', JSON.stringify(studyArchive));
+                
+                document.getElementById('nextBtn').style.display = 'block';
+                document.getElementById('recordBtn').style.display = 'none';
+            } catch (e) {
+                feedbackArea.innerHTML = "<p style='color:red;'>분석 실패. Vercel 설정을 확인하세요.</p>";
+            }
+        };
     }
 
-    function renderFeedbackView(res, fullText) {
+    function renderFeedbackView(res, fullText, containerId) {
         let html = `<div class="score-circle">${res.total_score}점</div>`;
         res.sentences.forEach(s => {
-            html += `
-                <div class="sentence-card">
-                    <div style="color:#888; font-size:12px;">${s.orig}</div>
-                    <div class="better-highlight">${s.better_en}</div>
-                    <div style="color:var(--deep-green-text); font-weight:700; margin-top:5px;">${s.better_ko}</div>
-                    <div class="tip-box">💡 ${s.tip_en} (${s.tip_ko})</div>
-                </div>`;
+            html += `<div class="sentence-card"><div class="orig-text">${s.orig}</div><div class="better-highlight">${s.better_en}</div><div style="font-size:13px; color:var(--deep-green-text); font-weight:700; margin-top:8px;">${s.better_ko}</div><div class="tip-box">💡 Coach Tip: ${s.tip_en} (${s.tip_ko})</div></div>`;
         });
-        document.getElementById('feedbackArea').innerHTML = html;
+        document.getElementById(containerId).innerHTML = html;
     }
 
-    function renderArchive() {
+    function updateArchiveUI() {
         const list = document.getElementById('archiveList');
-        list.innerHTML = studyArchive.map(e => `
-            <div class="sentence-card">
-                <div style="font-weight:800;">${e.topic} - ${e.score}점</div>
-                <div style="font-size:12px; color:#666;">${e.userSpeech}</div>
-            </div>
-        `).join('');
+        if(studyArchive.length === 0) { list.innerHTML = "<p style='text-align:center; padding:50px;'>기록이 없습니다.</p>"; return; }
+        list.innerHTML = studyArchive.map(e => `<div class="archive-card" onclick="openDetail(${e.id})"><div class="archive-badge">${e.ts}</div><div style="font-size:18px; font-weight:800;">${e.topic}</div><div style="color:var(--ios-blue); font-weight:700;">${e.score}점</div><button class="delete-btn" onclick="deleteArchive(${e.id}, event)">삭제</button></div>`).join('');
+    }
+
+    function openDetail(id) {
+        const e = studyArchive.find(x => x.id === id);
+        if(!e) return;
+        document.getElementById('detail-title-ts').innerText = e.topic;
+        renderFeedbackView(e, e.full_text, 'detail-content');
+        document.getElementById('detail-view').style.display = 'block';
+    }
+
+    function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
+    function deleteArchive(id, ev) { ev.stopPropagation(); if(confirm("삭제할까요?")) { studyArchive = studyArchive.filter(x => x.id !== id); localStorage.setItem('study_archive_v8', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+    function clearArchive() { if(confirm("전체 삭제할까요?")) { studyArchive = []; localStorage.setItem('study_archive_v8', JSON.stringify(studyArchive)); updateArchiveUI(); } }
+
+    function renderAdmin() {
+        const cont = document.getElementById('adminContent');
+        cont.innerHTML = ['v1', 'v2'].map(c => `<div class="admin-card"><div style="font-weight:800; margin-bottom:10px;">${c==='v1'?'Places':'Food'} (${db[c].length})</div><div style="font-size:11px; color:#666; background:#f9f9f9; padding:10px; border-radius:12px; max-height:80px; overflow-y:auto; margin-bottom:10px;">${db[c].join(', ')}</div><div style="display:flex; gap:8px;"><input type="text" id="add-${c}" placeholder="추가..." style="flex:1; border:1px solid #ddd; border-radius:10px; padding:10px;"><button class="sub-btn active" style="width:60px;" onclick="addWord('${c}')">Add</button></div></div>`).join('');
+    }
+
+    function addWord(c) {
+        const val = document.getElementById(`add-${c}`).value.trim();
+        if(!val) return; db[c].unshift(val); localStorage.setItem('ultimate_db_v8', JSON.stringify(db));
+        document.getElementById(`add-${c}`).value = ""; renderAdmin();
     }
 </script>
 </body>
